@@ -418,7 +418,7 @@ document.getElementById('linkGo').onclick = async () => {
   const t = setTimeout(() => ctl.abort(), 10000);  // 10 秒 timeout，唔會卡死
   try {
     // 全自動：直接交畀自動工廠（Mac mini），唔使經 Hermes 對話
-    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net:8326/submit?url=' +
+    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/submit?url=' +
       encodeURIComponent(url) + '&title=' + encodeURIComponent(document.title), {method: 'POST', signal: ctl.signal});
     clearTimeout(t);
     const d = await r.json();
@@ -441,6 +441,11 @@ document.getElementById('linkGo').onclick = async () => {
     u.style.cssText = 'margin-top:6px;padding:6px 10px;background:#241545;border-radius:8px;word-break:break-all;color:#ffd54a;font-size:12px;user-select:all;-webkit-user-select:all;';
     u.textContent = url;
     msg.appendChild(u);
+    const c2 = document.createElement('button');
+    c2.style.cssText = 'margin-top:8px;background:#7c5cff;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;';
+    c2.textContent = '📋 手動複製';
+    c2.onclick = async () => { c2.textContent = (await copyText(url)) ? '✅ 複製咗！' : '⚠ 再試（長按下面條連結）'; };
+    msg.appendChild(c2);
   }
 };
 
