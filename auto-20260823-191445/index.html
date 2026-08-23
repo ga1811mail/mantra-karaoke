@@ -79,6 +79,7 @@
 <body>
 <h1>金剛薩埵百字明咒（易讀版）</h1>
 <div class="sub">自動跟唸版（拉丁轉寫；中文音譯/解釋可貼 link 畀 Hermes 執靚）</div>
+<div class="explain" id="explainBox" style="display:none"></div>
 
 <div class="linkbox">
   <label>🔗 輸入任何經文影片連結：</label>
@@ -444,9 +445,7 @@ function showProgress(url) {
     panel.innerHTML =
       '<div class="phead">⏳ Hermes 處理中 — 自動更新進度</div>' +
       [1,2,3,4,5].map(s => `<div class="prow" data-st="${s}"><span>${s}. ${STAGES[s]}</span><div class="pbar"><i></i></div></div>`).join('') +
-      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>
-<div class="explain" id="explainBox" style="display:none"></div>
-';
+      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>';
     document.querySelector('.linkbox').appendChild(panel);
   }
   panel.style.display = 'block';

@@ -79,6 +79,7 @@
 <body>
 <h1>楞嚴咒心</h1>
 <div class="sub">Shurangama Mantra ｜ 果濱居士逐句練習版 ｜ 快誦一遍 ｜ 慢速跟唸最舒服</div>
+<div class="explain" id="explainBox" style="display:none"></div>
 
 <div class="linkbox">
   <label>🔗 輸入任何經文影片連結：</label>
@@ -465,9 +466,7 @@ function showProgress(url) {
     panel.innerHTML =
       '<div class="phead">⏳ Hermes 處理中 — 自動更新進度</div>' +
       [1,2,3,4,5].map(s => `<div class="prow" data-st="${s}"><span>${s}. ${STAGES[s]}</span><div class="pbar"><i></i></div></div>`).join('') +
-      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>
-<div class="explain" id="explainBox" style="display:none"></div>
-';
+      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>';
     document.querySelector('.linkbox').appendChild(panel);
   }
   panel.style.display = 'block';
