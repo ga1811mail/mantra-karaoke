@@ -428,27 +428,30 @@ document.getElementById('linkGo').onclick = async () => {
   }
   btn.textContent = '⏳ 提交中…';
   msg.className = 'msg';
+  showProgress(url);  // 即刻顯示進度面板，唔使等 submit 返回
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 10000);  // 10 秒 timeout，唔會卡死
   try {
     // 全自動：直接交畀自動工廠（Mac mini），唔使經 Hermes 對話
     const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net:8326/submit?url=' +
-      encodeURIComponent(url) + '&title=' + encodeURIComponent(document.title), {method: 'POST'});
+      encodeURIComponent(url) + '&title=' + encodeURIComponent(document.title), {method: 'POST', signal: ctl.signal});
+    clearTimeout(t);
     const d = await r.json();
     if (d.ok) {
       btn.textContent = '✅ 已提交！';
       msg.className = 'msg ok';
       msg.textContent = '✅ 已交畀自動工廠！進度 bar 會逐格跳，完成會彈出跟唸版連結（約 2–5 分鐘）。';
-      showProgress(url);
       return;
     }
     throw new Error(d.error || 'submit failed');
   } catch(e) {
+    clearTimeout(t);
     // 工廠連唔到（Mac mini 關機/網絡）→ fallback 舊流程：複製去 Hermes 對話
     btn.textContent = '⚠ 工廠離線';
     const ok = await copyText(url);
     btn.textContent = ok ? '⚠ 已複製（後備）' : '⚠ 複製失敗';
     msg.className = 'msg';
     msg.textContent = '自動工廠暫時連唔到（' + (e.message || e) + '）— 已幫你複製連結，貼去 Hermes 對話一樣得。';
-    showProgress(url);
   }
 };
 
