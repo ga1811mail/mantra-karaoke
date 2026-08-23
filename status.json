@@ -2,10 +2,10 @@
  "jobs": {
   "https://www.youtube.com/shorts/lY8CQHcZtf8": {
    "title": "BGM測試",
-   "stage": 4,
-   "stageName": "生成跟唸版",
+   "stage": 5,
+   "stageName": "上架公開站",
    "url": "",
-   "updated": "2026-08-23T18:27:03+0800"
+   "updated": "2026-08-23T18:27:07+0800"
   },
   "https://www.youtube.com/watch?v=RnY9ze-Iag0": {
    "title": "楞嚴咒心自動測試",
@@ -15,5 +15,5 @@
    "updated": "2026-08-23T18:20:36+0800"
   }
  },
- "_last": "stage 4 生成跟唸版"
+ "_last": "stage 5 上架公開站"
 }
