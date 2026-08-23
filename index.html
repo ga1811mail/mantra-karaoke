@@ -169,8 +169,22 @@ async function toggleExplain(slug, title, btn) {
   if (!ex) ex = Object.values(lib).find(e => (e.match || []).some(k => (title || '').includes(k)));
   if (!ex) { box.textContent = '（呢篇經文未有解釋庫記錄）'; box.style.display = 'block'; btn.textContent = '✖ 收起'; return; }
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // 逐句對照：perLine（中文解釋）對應 roman 每行（拼音/音譯）
+  const rs = String(ex.roman || '').split('\n').filter(s => s.trim());
+  const pl = Array.isArray(ex.perLine) ? ex.perLine : [];
+  let per = '';
+  if (pl.length) {
+    per = '<div class="er">';
+    rs.forEach((r, i) => {
+      const zh = pl[i] || '';
+      per += '<div style="margin-bottom:7px"><div style="color:#ffd54a;font-weight:600">' + esc(r) + '</div>' +
+             (zh ? '<div style="color:#c9b8f0">' + esc(zh) + '</div>' : '') + '</div>';
+    });
+    per += '</div>';
+  }
   box.innerHTML = '<b style="color:#ffd54a">📖 ' + esc(ex.title || slug) + '</b>' +
-    (ex.roman ? '<div class="er">' + esc(ex.roman) + '</div>' : '') +
+    per +
+    (!pl.length && ex.roman ? '<div class="er">' + esc(ex.roman) + '</div>' : '') +
     (ex.meaning ? '<div>' + esc(ex.meaning) + '</div>' : '');
   box.style.display = 'block';
   btn.textContent = '✖ 收起';
