@@ -9,11 +9,11 @@
   },
   "https://www.youtube.com/shorts/lY8CQHcZtf8": {
    "title": "BGM再測",
-   "stage": 3,
-   "stageName": "整理拼音",
+   "stage": -1,
+   "stageName": "❌ 失敗：冇清晰人聲唸誦（疑似純音樂/BGM，或轉錄結果太短）",
    "url": "",
-   "updated": "2026-08-23T18:28:34+0800"
+   "updated": "2026-08-23T18:28:37+0800"
   }
  },
- "_last": "stage 3 整理拼音"
+ "_last": "stage -1 ❌ 失敗：冇清晰人聲唸誦（疑似純音樂/BGM，或轉錄結果太短）"
 }
