@@ -6,7 +6,14 @@
    "stageName": "❌ 失敗：冇清晰人聲唸誦（疑似純音樂/BGM，或轉錄結果太短）",
    "url": "",
    "updated": "2026-08-23T18:28:37+0800"
+  },
+  "https://www.youtube.com/watch?v=RnY9ze-Iag0": {
+   "title": "443test",
+   "stage": 0,
+   "stageName": "等待處理",
+   "url": "",
+   "updated": "2026-08-23T19:08:12+0800"
   }
  },
- "_last": "deleted auto-20260823-182031"
+ "_last": "stage 0 等待處理"
 }
