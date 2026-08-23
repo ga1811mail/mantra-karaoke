@@ -1,11 +1,11 @@
 {
  "jobs": {
   "https://www.youtube.com/shorts/lY8CQHcZtf8": {
-   "title": "楞嚴咒心",
-   "stage": 6,
-   "stageName": "已上架",
-   "url": "https://ga1811mail.github.io/mantra-karaoke/shurangama/",
-   "updated": "2026-08-23T17:27:30+0800"
+   "title": "BGM測試",
+   "stage": 5,
+   "stageName": "上架公開站",
+   "url": "",
+   "updated": "2026-08-23T18:26:09+0800"
   },
   "https://www.youtube.com/watch?v=RnY9ze-Iag0": {
    "title": "楞嚴咒心自動測試",
@@ -15,5 +15,5 @@
    "updated": "2026-08-23T18:20:36+0800"
   }
  },
- "_last": "stage 6 已上架"
+ "_last": "stage 5 上架公開站"
 }
