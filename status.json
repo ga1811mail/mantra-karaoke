@@ -9,11 +9,11 @@
   },
   "https://www.youtube.com/watch?v=RnY9ze-Iag0": {
    "title": "443test",
-   "stage": 3,
-   "stageName": "整理拼音",
+   "stage": 4,
+   "stageName": "生成跟唸版",
    "url": "",
-   "updated": "2026-08-23T19:08:32+0800"
+   "updated": "2026-08-23T19:08:34+0800"
   }
  },
- "_last": "stage 3 整理拼音"
+ "_last": "stage 4 生成跟唸版"
 }
