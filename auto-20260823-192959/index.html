@@ -261,6 +261,22 @@ function tick() {
   if (singleLine >= 0 && !seeking) {
     const L = lines[singleLine];
     if (t >= L.e - 0.05) {
+      // 單句計次：每唸完一句 -1（設咗遍數先計）
+      if (goal > 0 && counting) {
+        passCounted = true;
+        remain--; updCounter();
+        const el = document.getElementById('remain');
+        el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+        if (remain <= 0) {
+          document.getElementById('done').textContent = '🎉 完成 ' + goal + ' 遍！功德迴向一切眾生 🙏';
+          document.getElementById('done').style.display = 'block';
+          counting = false;
+          singleLine = -1;
+          document.getElementById('lineLoopBtn').classList.remove('loopon');
+          document.getElementById('lineLoopBtn').textContent = '🔂 單句';
+          lines.forEach(LL => LL.sec.classList.remove('sololoop'));
+        }
+      }
       AUDIO.pause();
       document.getElementById('playBtn').textContent = '▶ 播放';
       seekTo(L.s / RATES[curRate].s);
@@ -269,7 +285,7 @@ function tick() {
       lines.forEach((LL,i) => LL.sec.classList.toggle('playing', i===singleLine));
       return;
     }
-    if (t < L.s) { seekTo(L.s / RATES[curRate].s); return; }
+    if (t < L.s) { if (!AUDIO.paused) seekTo(L.s / RATES[curRate].s); return; }
   }
   // A-B loop（原軸比較）
   if (abA >= 0 && abB > abA && t >= abB && !seeking) { seekTo(abA / RATES[curRate].s); return; }
@@ -291,6 +307,9 @@ function tick() {
       document.getElementById('done').textContent = '🎉 完成 ' + goal + ' 遍！功德迴向一切眾生 🙏';
       document.getElementById('done').style.display = 'block';
       AUDIO.pause();
+      AUDIO.loop = false;
+      document.getElementById('loopBtn').classList.remove('loopon');
+      document.getElementById('loopBtn').textContent = '🔁 整段';
       document.getElementById('playBtn').textContent = '▶ 播放';
       counting = false;
     }
@@ -321,6 +340,7 @@ AUDIO.addEventListener('ended', () => {
 document.getElementById('playBtn').onclick = () => {
   if (AUDIO.paused) {
     if (goal > 0 && !counting) { counting = true; passCounted = false; }
+    if (goal > 0) { AUDIO.loop = true; document.getElementById('loopBtn').classList.add('loopon'); document.getElementById('loopBtn').textContent = '🔁 整段開'; }
     document.getElementById('remain').classList.add('counting');
     AUDIO.play();
     document.getElementById('playBtn').textContent = '⏸ 暫停';
@@ -333,6 +353,7 @@ document.getElementById('restartBtn').onclick = () => {
   AUDIO.currentTime = 0;
   passCounted = false;
   if (goal > 0) { counting = true; }
+  if (goal > 0) { AUDIO.loop = true; document.getElementById('loopBtn').classList.add('loopon'); document.getElementById('loopBtn').textContent = '🔁 整段開'; }
   document.getElementById('done').style.display = 'none';
   AUDIO.play();
   document.getElementById('playBtn').textContent = '⏸ 暫停';
