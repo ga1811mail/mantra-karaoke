@@ -23,6 +23,18 @@
   .linkbox button { background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; border:none; border-radius:20px; padding:9px 20px; font-size:14px; font-weight:700; cursor:pointer; }
   .linkbox .msg { font-size:12px; color:#7d6ea8; margin-top:8px; }
   .linkbox .msg.ok { color:#7ee787; }
+  .ppanel { margin-top:12px; border-top:1px solid rgba(255,213,74,.2); padding-top:12px; }
+  .ppanel .phead { font-size:13px; color:#ffd54a; margin-bottom:8px; letter-spacing:1px; }
+  .ppanel .prow { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
+  .ppanel .prow span { font-size:12px; color:#c9b8f0; width:110px; flex-shrink:0; }
+  .ppanel .pbar { flex:1; height:9px; background:#3a2a66; border-radius:5px; overflow:hidden; }
+  .ppanel .pbar i { display:block; height:100%; width:0%; background:linear-gradient(90deg,#6a4fb0,#b39ddb); border-radius:5px; transition:width .6s; }
+  .ppanel .prow.done span { color:#7ee787; }
+  .ppanel .prow.done .pbar i { width:100%; background:linear-gradient(90deg,#2ea043,#7ee787); }
+  .ppanel .prow.active .pbar i { width:55%; background:linear-gradient(90deg,#ffd54a,#ff9d2e); animation:pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:.5;} 50%{opacity:1;} }
+  .ppanel .pnote { font-size:12px; color:#9b8cc0; margin-top:6px; }
+  .ppanel .pnote a { color:#7ee787; }
   .foot { text-align:center; margin-top:40px; font-size:12px; color:#6a5a95; letter-spacing:1px; }
   @media (max-width:640px) { .grid { grid-template-columns:1fr; } }
 </style>
@@ -97,7 +109,58 @@ document.getElementById('linkGo').onclick = async () => {
     msg.appendChild(u);
   }
   document.getElementById('linkInput').select();
+  showProgress(url);
 };
+
+// ── 處理進度 bar：提交後輪詢 status.json（Hermes 每階段 git push 更新）──
+const STAGES = ['等待處理','下載影片','轉錄經文','整理拼音解釋','生成跟唸版','上架公開站','完成'];
+let pollTimer = null;
+function showProgress(url) {
+  let panel = document.getElementById('ppanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.className = 'ppanel'; panel.id = 'ppanel';
+    panel.innerHTML =
+      '<div class="phead">⏳ Hermes 處理中 — 自動更新進度</div>' +
+      [1,2,3,4,5].map(s => `<div class="prow" data-st="${s}"><span>${s}. ${STAGES[s]}</span><div class="pbar"><i></i></div></div>`).join('') +
+      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>';
+    document.querySelector('.linkbox').appendChild(panel);
+  }
+  panel.style.display = 'block';
+  clearInterval(pollTimer);
+  pollTimer = setInterval(() => pollStatus(url), 10000);
+  pollStatus(url);
+}
+function renderStages(job) {
+  const rows = document.querySelectorAll('.ppanel .prow');
+  rows.forEach(r => r.classList.remove('done','active'));
+  const st = job.stage || 0;
+  rows.forEach(r => {
+    const n = parseInt(r.dataset.st);
+    if (st > n) r.classList.add('done');
+    else if (st === n && st < 6) r.classList.add('active');
+    else if (st >= 6) r.classList.add('done');
+  });
+  const note = document.getElementById('pnote');
+  if (st >= 6) {
+    const u = job.url || '';
+    note.innerHTML = u
+      ? `✅ <b>已上架！</b> <a href="${u}" target="_blank">開啟跟唸版 →</a>`
+      : '✅ 已上架！';
+    clearInterval(pollTimer);
+  } else {
+    note.textContent = '⏳ ' + (job.stageName || STAGES[st] || '處理中') + '…（每 10 秒自動更新）';
+  }
+}
+async function pollStatus(url) {
+  try {
+    const r = await fetch('status.json?t=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) return;
+    const d = await r.json();
+    const job = d.jobs && d.jobs[url];
+    renderStages(job ? job : {stage: 0, stageName: '等待 Hermes 開始處理', url: ''});
+  } catch(e) {}
+}
 </script>
 </body>
 </html>
