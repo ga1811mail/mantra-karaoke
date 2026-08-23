@@ -16,11 +16,11 @@
   },
   "https://www.youtube.com/shorts/HcHoyN8fu_U": {
    "title": "📿 經文跟唸版",
-   "stage": 0,
-   "stageName": "等待處理",
+   "stage": 1,
+   "stageName": "下載影片",
    "url": "",
-   "updated": "2026-08-23T19:14:11+0800"
+   "updated": "2026-08-23T19:14:13+0800"
   }
  },
- "_last": "stage 0 等待處理"
+ "_last": "stage 1 下載影片"
 }
