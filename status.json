@@ -1,12 +1,5 @@
 {
  "jobs": {
-  "https://www.youtube.com/watch?v=RnY9ze-Iag0": {
-   "title": "楞嚴咒心自動測試",
-   "stage": 6,
-   "stageName": "已上架",
-   "url": "https://ga1811mail.github.io/mantra-karaoke/auto-20260823-182031/",
-   "updated": "2026-08-23T18:20:36+0800"
-  },
   "https://www.youtube.com/shorts/lY8CQHcZtf8": {
    "title": "BGM再測",
    "stage": -1,
@@ -15,5 +8,5 @@
    "updated": "2026-08-23T18:28:37+0800"
   }
  },
- "_last": "stage -1 ❌ 失敗：冇清晰人聲唸誦（疑似純音樂/BGM，或轉錄結果太短）"
+ "_last": "deleted auto-20260823-182031"
 }
