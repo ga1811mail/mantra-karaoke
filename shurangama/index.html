@@ -68,6 +68,11 @@
   .line.sololoop { border-color:#7ee787; box-shadow:0 0 14px rgba(126,231,135,.35); background:rgba(126,231,135,.06); }
   .line.sololoop .num::after { content:" 🔂 重複中"; color:#7ee787; font-weight:700; }
   .done { text-align:center; font-size:20px; color:#ffd54a; margin-top:14px; letter-spacing:2px; display:none; }
+  .explain { max-width:860px; margin:0 auto 20px; background:rgba(255,213,74,.05); border:1px solid rgba(255,213,74,.25); border-radius:14px; padding:16px 18px; }
+  .explain h3 { font-size:14px; color:#ffd54a; margin-bottom:8px; letter-spacing:2px; }
+  .explain .roman { font-size:15px; line-height:2.1; color:#e8e0f5; letter-spacing:1px; padding:10px 14px; background:rgba(21,10,40,.5); border-radius:10px; margin-bottom:10px; white-space:pre-line; }
+  .explain .meaning { font-size:13.5px; line-height:1.9; color:#c9b8f0; }
+
   @media (max-width:760px) { .lines { grid-template-columns:1fr; } #curLine .syl { font-size:28px; } #curLine .ch b { font-size:28px; } .counter .big { font-size:18px; } }
 </style>
 </head>
@@ -460,7 +465,9 @@ function showProgress(url) {
     panel.innerHTML =
       '<div class="phead">⏳ Hermes 處理中 — 自動更新進度</div>' +
       [1,2,3,4,5].map(s => `<div class="prow" data-st="${s}"><span>${s}. ${STAGES[s]}</span><div class="pbar"><i></i></div></div>`).join('') +
-      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>';
+      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>
+<div class="explain" id="explainBox" style="display:none"></div>
+';
     document.querySelector('.linkbox').appendChild(panel);
   }
   panel.style.display = 'block';
@@ -507,6 +514,25 @@ async function pollStatus(url) {
   const job = d.jobs[url];
   renderStages(job ? job : {stage: 0, stageName: '等待開始處理', url: ''});
 }
+// ── 經文中文解釋（explanations.json：音譯全文＋白話義理）──
+(async () => {
+  try {
+    const r = await fetch('../explanations.json?t=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) return;
+    const lib = await r.json();
+    const slug = location.pathname.split('/').filter(Boolean).pop() || '';
+    let ex = lib[slug];
+    if (!ex) {
+      const t = document.title;
+      ex = Object.values(lib).find(e => (e.match || []).some(k => t.includes(k)));
+    }
+    if (!ex) return;
+    const esc2 = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const box = document.getElementById('explainBox');
+    box.style.display = 'block';
+    box.innerHTML = '<h3>📖 經文解釋</h3><div class="roman">' + esc2(ex.roman) + '</div><div class="meaning">' + esc2(ex.meaning) + '</div>';
+  } catch(e) {}
+})();
 renderCur(0);
 updAB(); updCounter();
 </script>
