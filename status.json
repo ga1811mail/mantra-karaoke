@@ -9,11 +9,11 @@
   },
   "https://www.youtube.com/watch?v=RnY9ze-Iag0": {
    "title": "443test",
-   "stage": 5,
-   "stageName": "上架公開站",
-   "url": "",
-   "updated": "2026-08-23T19:08:39+0800"
+   "stage": 6,
+   "stageName": "已上架",
+   "url": "https://ga1811mail.github.io/mantra-karaoke/auto-20260823-190842/",
+   "updated": "2026-08-23T19:09:05+0800"
   }
  },
- "_last": "deleted auto-20260823-190842"
+ "_last": "stage 6 已上架"
 }
