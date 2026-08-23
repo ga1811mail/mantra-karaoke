@@ -9,11 +9,11 @@
   },
   "https://www.youtube.com/watch?v=RnY9ze-Iag0": {
    "title": "443test",
-   "stage": 1,
-   "stageName": "下載影片",
+   "stage": 2,
+   "stageName": "轉錄經文",
    "url": "",
-   "updated": "2026-08-23T19:08:13+0800"
+   "updated": "2026-08-23T19:08:18+0800"
   }
  },
- "_last": "stage 1 下載影片"
+ "_last": "stage 2 轉錄經文"
 }
