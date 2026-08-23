@@ -1,1 +1,12 @@
-{"jobs": {}}
+{
+ "jobs": {
+  "https://www.youtube.com/shorts/lY8CQHcZtf8": {
+   "title": "https://www.youtube.com/shorts/lY8CQHcZtf8",
+   "stage": 6,
+   "stageName": "已上架",
+   "url": "",
+   "updated": "2026-08-23T17:27:30+0800"
+  }
+ },
+ "_last": "stage 6 已上架"
+}
