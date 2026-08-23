@@ -14,7 +14,7 @@
   .card:hover { border-color:#ffd54a; background:rgba(255,213,74,.08); transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,213,74,.15); }
   .card .name { font-size:18px; font-weight:700; color:#ffd54a; margin-bottom:6px; letter-spacing:1px; }
   .card .desc { font-size:13px; color:#b9a8e8; line-height:1.6; }
-  .card .tag { display:inline-block; margin-top:10px; font-size:11px; color:#9b8cc0; background:rgba(106,79,176,.3); border-radius:20px; padding:3px 10px; }
+  .card .tag { display:inline-block; margin-top:10px; font-size:11px; color:#9b8cc0; background:rgba(106,79,176,.3); border-radius:20px; padding:3px 10px; margin-right:4px; }
   .linkbox { max-width:720px; margin:34px auto 0; background:rgba(255,255,255,.04); border:1px dashed rgba(255,213,74,.35); border-radius:14px; padding:14px 16px; }
   .linkbox label { font-size:13px; color:#c9b8f0; display:block; margin-bottom:8px; }
   .linkbox .row { display:flex; gap:10px; flex-wrap:wrap; }
@@ -60,23 +60,45 @@
   <label>🔗 有其他經文影片連結想轉做跟唸版？</label>
   <div class="row">
     <input id="linkInput" type="url" placeholder="https://weixin.qq.com/sph/... 或 YouTube 連結" spellcheck="false">
-    <button id="linkGo">複製連結去 Hermes</button>
+    <button id="linkGo">生成跟唸版</button>
   </div>
-  <div class="msg" id="linkMsg">㩒掣自動複製 → 貼去 Hermes 對話（話「整呢條嘅跟唸版」），Hermes 會自動下載→轉錄→配拼音→上架呢度。</div>
+  <div class="msg" id="linkMsg">貼入經文/佛咒影片連結 → 㩒「生成跟唸版」→ 自動工廠即刻開工（下載→轉錄→拼音→生成→上架，約 2–5 分鐘），進度 bar 實時跳。</div>
 </div>
 
 <div class="foot">製作：Hermes ｜ 音頻為影片真實唸誦 ｜ 願一切眾生離苦得樂 🙏</div>
 
 <script>
+// ── 自動上架卡片：讀 status.json 列出所有已上架嘅經文 ──
+async function loadAutoCards() {
+  try {
+    const r = await fetch('status.json?t=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) return;
+    const d = await r.json();
+    const grid = document.querySelector('.grid');
+    Object.values(d.jobs || {}).forEach(job => {
+      if (!job.url || (job.stage || 0) < 6) return;
+      const slug = job.url.split('/').filter(Boolean).slice(-1)[0] || '';
+      if (!slug || document.querySelector(`a[href="${slug}/"]`)) return;
+      const a = document.createElement('a');
+      a.className = 'card'; a.href = job.url;
+      const name = String(job.title || '經文').split(/[-|｜]/)[0].trim().slice(0, 18);
+      a.innerHTML = `<div class="name">${name}</div>
+        <div class="desc">自動跟唸版（逐字拼音 highlight）· 快誦原速＋慢速練習</div>
+        <span class="tag">🤖 自動生成</span> <span class="tag">🔂 單句重複</span>`;
+      grid.appendChild(a);
+    });
+  } catch(e) {}
+}
+loadAutoCards();
+
+// ── 輸入影片連結：直接提交畀自動工廠（Mac mini）──
 async function copyText(url) {
-  // 方法1: Clipboard API（現代瀏覽器，HTTPS 可用）
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(url);
       return true;
     }
   } catch(e) {}
-  // 方法2: execCommand（fallback，iOS Safari 技巧）
   try {
     const ta = document.createElement('textarea');
     ta.value = url;
@@ -100,24 +122,31 @@ document.getElementById('linkGo').onclick = async () => {
     msg.className = 'msg'; msg.textContent = '⚠ 請輸入完整連結（http/https 開頭）';
     return;
   }
-  btn.textContent = '⏳ 複製中…';
-  const ok = await copyText(url);
-  btn.textContent = ok ? '✅ 已複製！' : '⚠ 自動複製失敗';
-  msg.className = 'msg' + (ok ? ' ok' : '');
-  msg.textContent = ok
-    ? '✅ 已複製！去 Hermes 對話貼上，話「整呢條嘅跟唸版」就得。'
-    : '自動複製唔得 — 下面條連結已幫你選取，長按／⌘C 手動複製：';
-  if (!ok) {
-    const u = document.createElement('div');
-    u.style.cssText = 'margin-top:6px;padding:6px 10px;background:#241545;border-radius:8px;word-break:break-all;color:#ffd54a;font-size:12px;';
-    u.textContent = url;
-    msg.appendChild(u);
+  btn.textContent = '⏳ 提交中…';
+  msg.className = 'msg';
+  try {
+    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net:8326/submit?url=' +
+      encodeURIComponent(url) + '&title=' + encodeURIComponent(document.title), {method: 'POST'});
+    const d = await r.json();
+    if (d.ok) {
+      btn.textContent = '✅ 已提交！';
+      msg.className = 'msg ok';
+      msg.textContent = '✅ 已交畀自動工廠！進度 bar 會逐格跳，完成會彈出跟唸版連結（約 2–5 分鐘）。';
+      showProgress(url);
+      return;
+    }
+    throw new Error(d.error || 'submit failed');
+  } catch(e) {
+    btn.textContent = '⚠ 工廠離線';
+    const ok = await copyText(url);
+    btn.textContent = ok ? '⚠ 已複製（後備）' : '⚠ 複製失敗';
+    msg.className = 'msg';
+    msg.textContent = '自動工廠暫時連唔到（' + (e.message || e) + '）— 已幫你複製連結，貼去 Hermes 對話一樣得。';
+    showProgress(url);
   }
-  document.getElementById('linkInput').select();
-  showProgress(url);
 };
 
-// ── 處理進度 bar：提交後輪詢 status.json（Hermes 每階段 git push 更新）──
+// ── 處理進度 bar：提交後輪詢 status.json（工廠每階段自動 push 更新）──
 const STAGES = ['等待處理','下載影片','轉錄經文','整理拼音解釋','生成跟唸版','上架公開站','完成'];
 let pollTimer = null;
 function showProgress(url) {
@@ -126,9 +155,9 @@ function showProgress(url) {
     panel = document.createElement('div');
     panel.className = 'ppanel'; panel.id = 'ppanel';
     panel.innerHTML =
-      '<div class="phead">⏳ Hermes 處理中 — 自動更新進度</div>' +
+      '<div class="phead">⏳ 自動工廠處理中 — 實時進度</div>' +
       [1,2,3,4,5].map(s => `<div class="prow" data-st="${s}"><span>${s}. ${STAGES[s]}</span><div class="pbar"><i></i></div></div>`).join('') +
-      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>';
+      '<div class="pnote" id="pnote">等待開始處理…</div>';
     document.querySelector('.linkbox').appendChild(panel);
   }
   panel.style.display = 'block';
@@ -153,6 +182,7 @@ function renderStages(job) {
       ? `✅ <b>已上架！</b> <a href="${u}" target="_blank">開啟跟唸版 →</a>`
       : '✅ 已上架！';
     clearInterval(pollTimer);
+    loadAutoCards();  // 目錄自動加卡
   } else {
     note.textContent = '⏳ ' + (job.stageName || STAGES[st] || '處理中') + '…（每 10 秒自動更新）';
   }
@@ -163,7 +193,7 @@ async function pollStatus(url) {
     if (!r.ok) return;
     const d = await r.json();
     const job = d.jobs && d.jobs[url];
-    renderStages(job ? job : {stage: 0, stageName: '等待 Hermes 開始處理', url: ''});
+    renderStages(job ? job : {stage: 0, stageName: '等待開始處理', url: ''});
   } catch(e) {}
 }
 </script>
