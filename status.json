@@ -9,11 +9,11 @@
   },
   "https://www.youtube.com/shorts/lY8CQHcZtf8": {
    "title": "BGM再測",
-   "stage": 0,
-   "stageName": "等待處理",
+   "stage": 1,
+   "stageName": "下載影片",
    "url": "",
-   "updated": "2026-08-23T18:28:16+0800"
+   "updated": "2026-08-23T18:28:18+0800"
   }
  },
- "_last": "stage 0 等待處理"
+ "_last": "stage 1 下載影片"
 }
