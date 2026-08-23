@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📿 經文跟唸版</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:40px 20px; }
+  h1 { text-align:center; font-size:26px; letter-spacing:6px; color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.35); margin-bottom:6px; }
+  .sub { text-align:center; font-size:13px; color:#9b8cc0; letter-spacing:2px; margin-bottom:30px; }
+  .grid { max-width:720px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .card { display:block; background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.25); border-radius:16px; padding:22px; text-decoration:none; color:#e8e0f5; transition:all .2s; }
+  .card:hover { border-color:#ffd54a; background:rgba(255,213,74,.08); transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,213,74,.15); }
+  .card .name { font-size:18px; font-weight:700; color:#ffd54a; margin-bottom:6px; letter-spacing:1px; }
+  .card .desc { font-size:13px; color:#b9a8e8; line-height:1.6; }
+  .card .tag { display:inline-block; margin-top:10px; font-size:11px; color:#9b8cc0; background:rgba(106,79,176,.3); border-radius:20px; padding:3px 10px; }
+  .linkbox { max-width:720px; margin:34px auto 0; background:rgba(255,255,255,.04); border:1px dashed rgba(255,213,74,.35); border-radius:14px; padding:14px 16px; }
+  .linkbox label { font-size:13px; color:#c9b8f0; display:block; margin-bottom:8px; }
+  .linkbox .row { display:flex; gap:10px; flex-wrap:wrap; }
+  .linkbox input { flex:1; min-width:200px; background:#241545; color:#e8e0f5; border:1px solid #6a4fb0; border-radius:8px; padding:9px 12px; font-size:14px; outline:none; }
+  .linkbox input:focus { border-color:#ffd54a; }
+  .linkbox button { background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; border:none; border-radius:20px; padding:9px 20px; font-size:14px; font-weight:700; cursor:pointer; }
+  .linkbox .msg { font-size:12px; color:#7d6ea8; margin-top:8px; }
+  .linkbox .msg.ok { color:#7ee787; }
+  .foot { text-align:center; margin-top:40px; font-size:12px; color:#6a5a95; letter-spacing:1px; }
+  @media (max-width:640px) { .grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<h1>📿 經文跟唸版</h1>
+<div class="sub">卡拉OK 式逐字拼音跟唸 ｜ 速度可調 ｜ 單句重複 ｜ 遍數計次</div>
+
+<div class="grid">
+  <a class="card" href="vajrasattva/">
+    <div class="name">金剛薩埵百字明</div>
+    <div class="desc">懺罪之王 · 淨化業障。逐字拼音 highlight，聽一句跟一句，適合初學者。</div>
+    <span class="tag">🔂 單句重複</span> <span class="tag">🔁 整段</span> <span class="tag">⏱ 0.4–1.5×</span>
+  </a>
+</div>
+
+<div class="linkbox">
+  <label>🔗 有其他經文影片連結想轉做跟唸版？</label>
+  <div class="row">
+    <input id="linkInput" type="url" placeholder="https://weixin.qq.com/sph/... 或 YouTube 連結" spellcheck="false">
+    <button id="linkGo">複製連結去 Hermes</button>
+  </div>
+  <div class="msg" id="linkMsg">㩒掣自動複製 → 貼去 Hermes 對話（話「整呢條嘅跟唸版」），Hermes 會自動下載→轉錄→配拼音→上架呢度。</div>
+</div>
+
+<div class="foot">製作：Hermes ｜ 音頻為影片真實唸誦 ｜ 願一切眾生離苦得樂 🙏</div>
+
+<script>
+document.getElementById('linkGo').onclick = () => {
+  const url = document.getElementById('linkInput').value.trim();
+  const msg = document.getElementById('linkMsg');
+  if (!/^https?:\/\//i.test(url)) {
+    msg.className = 'msg'; msg.textContent = '⚠ 請輸入完整連結（http/https 開頭）';
+    return;
+  }
+  const copyOk = (() => {
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    return ok;
+  })();
+  msg.className = 'msg ok';
+  msg.textContent = copyOk
+    ? '✅ 已複製！貼去 Hermes 對話即可自動生成上架。'
+    : '🔗 請手動複製連結，貼去 Hermes 對話：' + url;
+  document.getElementById('linkInput').select();
+};
+</script>
+</body>
+</html>

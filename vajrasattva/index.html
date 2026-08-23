@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>金剛薩埵百字明 · 卡拉OK 跟唸</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:28px 20px 40px; }
+  h1 { text-align:center; font-size:22px; letter-spacing:4px; color:#ffd54a; margin-bottom:4px; text-shadow:0 0 18px rgba(255,213,74,.35); }
+  .sub { text-align:center; font-size:12px; color:#9b8cc0; margin-bottom:20px; letter-spacing:2px; }
+  .linkbox { max-width:860px; margin:0 auto 20px; background:rgba(255,255,255,.04); border:1px dashed rgba(255,213,74,.35); border-radius:14px; padding:12px 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .linkbox label { font-size:13px; color:#c9b8f0; white-space:nowrap; }
+  .linkbox input { flex:1; min-width:200px; background:#241545; color:#e8e0f5; border:1px solid #6a4fb0; border-radius:8px; padding:8px 12px; font-size:14px; outline:none; }
+  .linkbox input:focus { border-color:#ffd54a; }
+  .linkbox .msg { font-size:12px; color:#7d6ea8; width:100%; }
+  .linkbox .msg.ok { color:#7ee787; }
+  .player { position:sticky; top:0; z-index:50; background:rgba(21,10,40,.92); backdrop-filter:blur(8px); border-bottom:1px solid rgba(255,213,74,.15); padding:12px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .btn { background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; border:none; border-radius:20px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 3px 12px rgba(255,157,46,.35); }
+  .btn:hover { filter:brightness(1.1); }
+  .btn.alt { background:linear-gradient(135deg,#6a4fb0,#4a3590); color:#e8e0f5; box-shadow:none; padding:6px 12px; font-size:13px; }
+  .btn.small { padding:5px 10px; font-size:12px; }
+  .btn.loopon { background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; box-shadow:0 0 12px rgba(255,213,74,.6); }
+  select { background:#2a1450; color:#e8e0f5; border:1px solid #6a4fb0; border-radius:8px; padding:5px 8px; font-size:13px; }
+  .ctl { display:flex; align-items:center; gap:8px; font-size:13px; color:#c9b8f0; }
+  .progress { flex:1; min-width:120px; height:6px; background:#3a2a66; border-radius:3px; overflow:hidden; }
+  .progress i { display:block; height:100%; width:0%; background:linear-gradient(90deg,#ffd54a,#ff9d2e); }
+  .timer { font-size:13px; color:#9b8cc0; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .counter { display:flex; align-items:center; gap:8px; background:rgba(255,213,74,.08); border:1px solid rgba(255,213,74,.3); border-radius:12px; padding:6px 12px; }
+  .counter .big { font-size:22px; font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:34px; text-align:center; transition:color .2s; }
+  .counter .big.counting { color:#7ee787; text-shadow:0 0 10px rgba(126,231,135,.5); }
+  .counter .big.flash { animation:flash .5s; }
+  @keyframes flash { 0%{transform:scale(1.6); color:#fff;} 100%{transform:scale(1);} }
+  .stage { max-width:860px; margin:26px auto 0; background:rgba(255,255,255,.03); border:1px solid rgba(255,213,74,.12); border-radius:18px; padding:34px 28px; min-height:280px; display:flex; align-items:center; justify-content:center; }
+  #curLine { text-align:center; width:100%; }
+  #curLine .syl { font-size:40px; line-height:1.5; display:flex; flex-wrap:wrap; justify-content:center; gap:14px; }
+  #curLine .grp { display:inline-flex; flex-wrap:wrap; gap:2px; }
+  #curLine .ch { display:inline-flex; flex-direction:column; align-items:center; margin:0 1px; padding:2px 6px; border-radius:8px; transition:all .12s; }
+  #curLine .ch b { font-size:40px; color:#e8e0f5; font-weight:700; line-height:1.25; }
+  #curLine .ch i { font-style:normal; font-size:14px; color:#9b8cc0; margin-top:2px; letter-spacing:.5px; }
+  #curLine .ch.lit { background:linear-gradient(180deg,rgba(255,213,74,.28),rgba(255,157,46,.12)); box-shadow:0 0 22px rgba(255,213,74,.5); transform:scale(1.08); }
+  #curLine .ch.lit b { color:#ffd54a; text-shadow:0 0 16px rgba(255,213,74,.9); }
+  #curLine .ch.lit i { color:#ffd54a; }
+  #curLine .note { margin-top:22px; font-size:17px; color:#c9b8f0; letter-spacing:1px; min-height:26px; }
+  .lines { max-width:860px; margin:26px auto 0; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .line { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:12px 14px; cursor:pointer; transition:all .2s; }
+  .line:hover { border-color:#ffd54a88; }
+  .line.playing { border-color:#ffd54a; background:rgba(255,213,74,.07); box-shadow:0 0 14px rgba(255,213,74,.25); }
+  .line .num { font-size:11px; color:#9b8cc0; letter-spacing:2px; margin-bottom:6px; }
+  .line .syl { font-size:17px; display:flex; flex-wrap:wrap; gap:8px; }
+  .line .ch { display:inline-flex; flex-direction:column; align-items:center; }
+  .line .ch b { font-size:17px; font-weight:600; }
+  .line .ch i { font-style:normal; font-size:10px; color:#8a7ab5; }
+  .line .ch.lit b { color:#ffd54a; }
+  .line .ch.lit i { color:#ffd54a; }
+  .line .note { font-size:11px; color:#7d6ea8; margin-top:6px; }
+  .line.sololoop { border-color:#7ee787; box-shadow:0 0 14px rgba(126,231,135,.35); background:rgba(126,231,135,.06); }
+  .line.sololoop .num::after { content:" 🔂 重複中"; color:#7ee787; font-weight:700; }
+  .done { text-align:center; font-size:20px; color:#ffd54a; margin-top:14px; letter-spacing:2px; display:none; }
+  @media (max-width:760px) { .lines { grid-template-columns:1fr; } #curLine .syl { font-size:28px; } #curLine .ch b { font-size:28px; } .counter .big { font-size:18px; } }
+</style>
+</head>
+<body>
+<h1>金剛薩埵百字明</h1>
+<div class="sub">KARAOKE 跟唸版 ｜ 播放時逐字亮起，跟住唸 ｜ 空格=播放/暫停</div>
+
+<div class="linkbox">
+  <label>🔗 輸入任何經文影片連結：</label>
+  <input id="linkInput" type="url" placeholder="https://weixin.qq.com/sph/... 或 YouTube 連結" spellcheck="false">
+  <button class="btn alt" id="linkGo">生成跟唸版</button>
+  <div class="msg" id="linkMsg">貼入連結 → 㩒「生成跟唸版」→ 自動複製，貼去 Hermes 對話即自動轉成跟唸版（下載→轉錄→拼音→生成）。</div>
+</div>
+
+<audio id="au" src="audio_full.wav" preload="auto" style="display:none"></audio>
+
+<div class="player">
+  <button class="btn" id="playBtn">▶ 播放</button>
+  <button class="btn" id="restartBtn" style="background:linear-gradient(135deg,#6a4fb0,#4a3590); color:#e8e0f5; box-shadow:none;" title="跳返 0 秒，由第一句重新播放">⟲ 由頭</button>
+  <button class="btn alt" id="loopBtn" title="整段自動重複播放">🔁 整段</button>
+  <button class="btn alt" id="lineLoopBtn" title="只重複唸當前一句（㩒任何一句即轉去唸嗰句）">🔂 單句</button>
+  <span class="ctl">速度
+    <select id="rate">
+      <option value="0.4">0.4×</option>
+      <option value="0.5">0.5×</option>
+      <option value="0.6">0.6×</option>
+      <option value="0.75">0.75×</option>
+      <option value="1" selected>1× 原速</option>
+      <option value="1.25">1.25×</option>
+      <option value="1.5">1.5×</option>
+    </select>
+  </span>
+  <span class="ctl" style="border-left:1px solid #4a3590; padding-left:12px;">
+    <button class="btn alt small" id="setA">ⓐ 設A</button>
+    <button class="btn alt small" id="setB">ⓑ 設B</button>
+    <button class="btn alt small" id="clrAB" title="清除 A-B">✕</button>
+    <span id="abShow" class="timer">A-B: –</span>
+  </span>
+  <span class="counter" title="設定目標遍數：按播放開始倒數，完整唸完一遍 -1">
+    遍數 <select id="goal">
+      <option value="3">3</option>
+      <option value="7">7</option>
+      <option value="21">21</option>
+      <option value="108">108</option>
+      <option value="0" selected>∞</option>
+    </select>
+    <span class="big" id="remain">∞</span>
+  </span>
+  <div class="progress"><i id="bar"></i></div>
+  <span class="timer" id="timer">0.0 / 27.4 s</span>
+</div>
+
+<div class="stage"><div id="curLine"></div></div>
+<div class="done" id="done">🎉 完成！功德迴向一切眾生 🙏</div>
+
+<div class="lines">
+<section class="line" id="L0" data-s="0.8" data-e="3.4">
+  <div class="num">01</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="0.800" data-e="0.986"><b>嗡</b><i>ōng</i></span></span><span class="grp"><span class="ch" data-s="0.986" data-e="1.171"><b>班</b><i>bān</i></span><span class="ch" data-s="1.171" data-e="1.357"><b>匝</b><i>zā</i></span><span class="ch" data-s="1.357" data-e="1.543"><b>兒</b><i>ér</i></span><span class="ch" data-s="1.543" data-e="1.729"><b>薩</b><i>sà</i></span><span class="ch" data-s="1.729" data-e="1.914"><b>埵</b><i>duǒ</i></span></span><span class="grp"><span class="ch" data-s="1.914" data-e="2.100"><b>薩</b><i>sà</i></span><span class="ch" data-s="2.100" data-e="2.286"><b>瑪</b><i>mǎ</i></span><span class="ch" data-s="2.286" data-e="2.471"><b>雅</b><i>yǎ</i></span></span><span class="grp"><span class="ch" data-s="2.471" data-e="2.657"><b>嘛</b><i>mā</i></span><span class="ch" data-s="2.657" data-e="2.843"><b>努</b><i>nǔ</i></span><span class="ch" data-s="2.843" data-e="3.029"><b>巴</b><i>bā</i></span><span class="ch" data-s="3.029" data-e="3.214"><b>拉</b><i>lā</i></span><span class="ch" data-s="3.214" data-e="3.400"><b>雅</b><i>yǎ</i></span></span></div>
+  <div class="note">嗡！金剛薩埵啊，請以您的三昧耶（本誓願）護持我。</div>
+</section>
+<section class="line" id="L1" data-s="3.4" data-e="5.9">
+  <div class="num">02</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="3.400" data-e="3.567"><b>班</b><i>bān</i></span><span class="ch" data-s="3.567" data-e="3.733"><b>匝</b><i>zā</i></span><span class="ch" data-s="3.733" data-e="3.900"><b>兒</b><i>ér</i></span><span class="ch" data-s="3.900" data-e="4.067"><b>薩</b><i>sà</i></span><span class="ch" data-s="4.067" data-e="4.233"><b>埵</b><i>duǒ</i></span></span><span class="grp"><span class="ch" data-s="4.233" data-e="4.400"><b>帝</b><i>dì</i></span><span class="ch" data-s="4.400" data-e="4.567"><b>諾</b><i>nuò</i></span><span class="ch" data-s="4.567" data-e="4.733"><b>巴</b><i>bā</i></span></span><span class="grp"><span class="ch" data-s="4.733" data-e="4.900"><b>迪</b><i>dí</i></span><span class="ch" data-s="4.900" data-e="5.067"><b>叉</b><i>chā</i></span><span class="ch" data-s="5.067" data-e="5.233"><b>哲</b><i>zhé</i></span><span class="ch" data-s="5.233" data-e="5.400"><b>卓</b><i>zhuó</i></span><span class="ch" data-s="5.400" data-e="5.567"><b>美</b><i>měi</i></span><span class="ch" data-s="5.567" data-e="5.733"><b>巴</b><i>bā</i></span><span class="ch" data-s="5.733" data-e="5.900"><b>哇</b><i>wā</i></span></span></div>
+  <div class="note">金剛薩埵啊，請安住於我，令我堅固不退轉。</div>
+</section>
+<section class="line" id="L2" data-s="5.9" data-e="7.5">
+  <div class="num">03</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="5.900" data-e="6.129"><b>蘇</b><i>sū</i></span><span class="ch" data-s="6.129" data-e="6.357"><b>埵</b><i>duǒ</i></span><span class="ch" data-s="6.357" data-e="6.586"><b>卡</b><i>kǎ</i></span><span class="ch" data-s="6.586" data-e="6.814"><b>呦</b><i>yōu</i></span></span><span class="grp"><span class="ch" data-s="6.814" data-e="7.043"><b>美</b><i>měi</i></span><span class="ch" data-s="7.043" data-e="7.271"><b>巴</b><i>bā</i></span><span class="ch" data-s="7.271" data-e="7.500"><b>哇</b><i>wā</i></span></span></div>
+  <div class="note">請令我滿足、歡喜。</div>
+</section>
+<section class="line" id="L3" data-s="7.5" data-e="9.1">
+  <div class="num">04</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="7.500" data-e="7.729"><b>蘇</b><i>sū</i></span><span class="ch" data-s="7.729" data-e="7.957"><b>波</b><i>bō</i></span><span class="ch" data-s="7.957" data-e="8.186"><b>卡</b><i>kǎ</i></span><span class="ch" data-s="8.186" data-e="8.414"><b>呦</b><i>yōu</i></span></span><span class="grp"><span class="ch" data-s="8.414" data-e="8.643"><b>美</b><i>měi</i></span><span class="ch" data-s="8.643" data-e="8.871"><b>巴</b><i>bā</i></span><span class="ch" data-s="8.871" data-e="9.100"><b>哇</b><i>wā</i></span></span></div>
+  <div class="note">請令我增長、豐足。</div>
+</section>
+<section class="line" id="L4" data-s="9.1" data-e="10.6">
+  <div class="num">05</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="9.100" data-e="9.314"><b>阿</b><i>ā</i></span><span class="ch" data-s="9.314" data-e="9.529"><b>努</b><i>nǔ</i></span><span class="ch" data-s="9.529" data-e="9.743"><b>日</b><i>rì</i></span><span class="ch" data-s="9.743" data-e="9.957"><b>多</b><i>duō</i></span></span><span class="grp"><span class="ch" data-s="9.957" data-e="10.171"><b>美</b><i>měi</i></span><span class="ch" data-s="10.171" data-e="10.386"><b>巴</b><i>bā</i></span><span class="ch" data-s="10.386" data-e="10.600"><b>哇</b><i>wā</i></span></span></div>
+  <div class="note">請慈愛於我，令我具足慈悲眷顧。</div>
+</section>
+<section class="line" id="L5" data-s="10.6" data-e="12.1">
+  <div class="num">06</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="10.600" data-e="10.767"><b>薩</b><i>sà</i></span><span class="ch" data-s="10.767" data-e="10.933"><b>哇</b><i>wā</i></span><span class="ch" data-s="10.933" data-e="11.100"><b>斯</b><i>sī</i></span><span class="ch" data-s="11.100" data-e="11.267"><b>德</b><i>dé</i></span><span class="ch" data-s="11.267" data-e="11.433"><b>瑪</b><i>mǎ</i></span><span class="ch" data-s="11.433" data-e="11.600"><b>美</b><i>měi</i></span><span class="ch" data-s="11.600" data-e="11.767"><b>札</b><i>zhá</i></span><span class="ch" data-s="11.767" data-e="11.933"><b>雅</b><i>yǎ</i></span><span class="ch" data-s="11.933" data-e="12.100"><b>叉</b><i>chā</i></span></span></div>
+  <div class="note">請賜予我一切成就（悉地）。</div>
+</section>
+<section class="line" id="L6" data-s="12.1" data-e="15.3">
+  <div class="num">07</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="12.100" data-e="12.288"><b>薩</b><i>sà</i></span><span class="ch" data-s="12.288" data-e="12.476"><b>哇</b><i>wā</i></span><span class="ch" data-s="12.476" data-e="12.665"><b>嘎</b><i>gā</i></span><span class="ch" data-s="12.665" data-e="12.853"><b>嘛</b><i>má</i></span></span><span class="grp"><span class="ch" data-s="12.853" data-e="13.041"><b>速</b><i>sù</i></span><span class="ch" data-s="13.041" data-e="13.229"><b>札</b><i>zhá</i></span><span class="ch" data-s="13.229" data-e="13.418"><b>美</b><i>měi</i></span></span><span class="grp"><span class="ch" data-s="13.418" data-e="13.606"><b>資</b><i>zī</i></span><span class="ch" data-s="13.606" data-e="13.794"><b>當</b><i>dāng</i></span><span class="ch" data-s="13.794" data-e="13.982"><b>洗</b><i>xǐ</i></span><span class="ch" data-s="13.982" data-e="14.171"><b>養</b><i>yǎng</i></span></span><span class="grp"><span class="ch" data-s="14.171" data-e="14.359"><b>釋</b><i>shì</i></span><span class="ch" data-s="14.359" data-e="14.547"><b>日</b><i>rì</i></span><span class="ch" data-s="14.547" data-e="14.735"><b>雅</b><i>yǎ</i></span></span><span class="grp"><span class="ch" data-s="14.735" data-e="14.924"><b>阿</b><i>ā</i></span><span class="ch" data-s="14.924" data-e="15.112"><b>嚕</b><i>lū</i></span><span class="ch" data-s="15.112" data-e="15.300"><b>吽</b><i>hōng</i></span></span></div>
+  <div class="note">請於我一切事業中，令心意轉為吉祥。吽！</div>
+</section>
+<section class="line" id="L7" data-s="15.3" data-e="18.3">
+  <div class="num">08</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="15.300" data-e="15.729"><b>哈</b><i>hā</i></span><span class="ch" data-s="15.729" data-e="16.157"><b>哈</b><i>hā</i></span><span class="ch" data-s="16.157" data-e="16.586"><b>哈</b><i>hā</i></span></span><span class="grp"><span class="ch" data-s="16.586" data-e="17.014"><b>夥</b><i>huǒ</i></span></span><span class="grp"><span class="ch" data-s="17.014" data-e="17.443"><b>巴</b><i>bā</i></span><span class="ch" data-s="17.443" data-e="17.871"><b>嘎</b><i>gā</i></span><span class="ch" data-s="17.871" data-e="18.300"><b>萬</b><i>wàn</i></span></span></div>
+  <div class="note">哈哈哈！夥！世尊啊！（三笑表空性智慧，呼喚佛陀）</div>
+</section>
+<section class="line" id="L8" data-s="18.3" data-e="21.4">
+  <div class="num">09</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="18.300" data-e="18.538"><b>薩</b><i>sà</i></span><span class="ch" data-s="18.538" data-e="18.777"><b>哇</b><i>wā</i></span><span class="ch" data-s="18.777" data-e="19.015"><b>達</b><i>dá</i></span><span class="ch" data-s="19.015" data-e="19.254"><b>他</b><i>tā</i></span><span class="ch" data-s="19.254" data-e="19.492"><b>嘎</b><i>gā</i></span><span class="ch" data-s="19.492" data-e="19.731"><b>達</b><i>dá</i></span></span><span class="grp"><span class="ch" data-s="19.731" data-e="19.969"><b>班</b><i>bān</i></span><span class="ch" data-s="19.969" data-e="20.208"><b>匝</b><i>zā</i></span><span class="ch" data-s="20.208" data-e="20.446"><b>兒</b><i>ér</i></span><span class="ch" data-s="20.446" data-e="20.685"><b>嘛</b><i>má</i></span><span class="ch" data-s="20.685" data-e="20.923"><b>美</b><i>měi</i></span><span class="ch" data-s="20.923" data-e="21.162"><b>母</b><i>mǔ</i></span><span class="ch" data-s="21.162" data-e="21.400"><b>扎</b><i>zhā</i></span></span></div>
+  <div class="note">一切如來之金剛體性啊，請勿捨離我。</div>
+</section>
+<section class="line" id="L9" data-s="21.4" data-e="25.6">
+  <div class="num">10</div>
+  <div class="syl"><span class="grp"><span class="ch" data-s="21.400" data-e="21.723"><b>班</b><i>bān</i></span><span class="ch" data-s="21.723" data-e="22.046"><b>匝</b><i>zā</i></span><span class="ch" data-s="22.046" data-e="22.369"><b>兒</b><i>ér</i></span><span class="ch" data-s="22.369" data-e="22.692"><b>巴</b><i>bā</i></span><span class="ch" data-s="22.692" data-e="23.015"><b>哇</b><i>wā</i></span></span><span class="grp"><span class="ch" data-s="23.015" data-e="23.338"><b>嘛</b><i>má</i></span><span class="ch" data-s="23.338" data-e="23.662"><b>哈</b><i>hā</i></span><span class="ch" data-s="23.662" data-e="23.985"><b>薩</b><i>sà</i></span><span class="ch" data-s="23.985" data-e="24.308"><b>瑪</b><i>mǎ</i></span><span class="ch" data-s="24.308" data-e="24.631"><b>雅</b><i>yǎ</i></span></span><span class="grp"><span class="ch" data-s="24.631" data-e="24.954"><b>薩</b><i>sà</i></span><span class="ch" data-s="24.954" data-e="25.277"><b>埵</b><i>duǒ</i></span></span><span class="grp"><span class="ch" data-s="25.277" data-e="25.600"><b>阿</b><i>ā</i></span></span></div>
+  <div class="note">請令我成為金剛（不動之體）！大誓願之薩埵啊！阿！</div>
+</section>
+</div>
+
+<script>
+const AUDIO = document.getElementById('au');
+const DUR = 27.4, LAST_END = 25.6;
+// 速度 → 離線音頻檔（atempo 保音高，音色唔變）。scale = 原軸時間 × rate = currentTime
+const RATES = {
+  '0.4':  {f:'audio_040.m4a', s:0.4},
+  '0.5':  {f:'audio_050.m4a', s:0.5},
+  '0.6':  {f:'audio_060.m4a', s:0.6},
+  '0.75': {f:'audio_075.m4a', s:0.75},
+  '1':    {f:'audio_full.wav', s:1},
+  '1.25': {f:'audio_125.m4a', s:1.25},
+  '1.5':  {f:'audio_150.m4a', s:1.5}
+};
+let curRate = '1';
+let chars = [], lines = [];
+document.querySelectorAll('.line').forEach(sec => {
+  const chs = [];
+  sec.querySelectorAll('.ch').forEach(el => chs.push({el, s:parseFloat(el.dataset.s), e:parseFloat(el.dataset.e)}));
+  lines.push({sec, s:parseFloat(sec.dataset.s), e:parseFloat(sec.dataset.e), chs});
+});
+function renderCur(i) {
+  const src = lines[i].sec, cur = document.getElementById('curLine');
+  cur.innerHTML = '';
+  const syl = document.createElement('div'); syl.className = 'syl';
+  src.querySelectorAll('.grp').forEach(g => {
+    const ng = document.createElement('span'); ng.className = 'grp';
+    g.querySelectorAll('.ch').forEach(c => {
+      const nc = document.createElement('span'); nc.className = 'ch';
+      nc.dataset.s = c.dataset.s; nc.dataset.e = c.dataset.e;
+      const b = document.createElement('b'); b.textContent = c.querySelector('b').textContent;
+      const ii = document.createElement('i'); ii.textContent = c.querySelector('i').textContent;
+      nc.appendChild(b); nc.appendChild(ii);
+      ng.appendChild(nc);
+    });
+    syl.appendChild(ng);
+  });
+  cur.appendChild(syl);
+  const note = document.createElement('div'); note.className = 'note';
+  note.textContent = src.querySelector('.note').textContent;
+  cur.appendChild(note);
+  chars = [];
+  cur.querySelectorAll('.ch').forEach(el => chars.push({el, s:parseFloat(el.dataset.s), e:parseFloat(el.dataset.e)}));
+}
+let curIdx = -1;
+let abA = -1, abB = -1;   // 原時間軸
+let singleLine = -1;      // 🔂 單句重複：-1 = 關
+let seeking = false;      // seek 進行中，防重入
+let goal = 0, remain = 0, counting = false, passCounted = false;
+
+function applyLit(t) {
+  let lit = -1;
+  for (let i=0;i<chars.length;i++) { if (t >= chars[i].s && t < chars[i].e) { lit = i; break; } }
+  chars.forEach((c,i) => c.el.classList.toggle('lit', i===lit));
+}
+function onSeeked() { seeking = false; }
+function seekTo(tRaw) {
+  seeking = true;
+  AUDIO.currentTime = tRaw;
+  AUDIO.removeEventListener('seeked', onSeeked);
+  AUDIO.addEventListener('seeked', onSeeked, {once:true});
+  setTimeout(() => { seeking = false; }, 1000);   // 保險：冇 seeked 都放行
+}
+
+function updCounter() {
+  const el = document.getElementById('remain');
+  el.textContent = goal === 0 ? '∞' : remain;
+}
+document.getElementById('goal').onchange = e => {
+  goal = parseInt(e.target.value);
+  remain = goal;
+  counting = false; passCounted = false;
+  document.getElementById('done').style.display = 'none';
+  updCounter();
+};
+
+function tick() {
+  const t = AUDIO.currentTime * RATES[curRate].s;   // 原時間軸
+  document.getElementById('bar').style.width = (Math.min(t, DUR) / DUR * 100) + '%';
+  document.getElementById('timer').textContent = t.toFixed(1) + ' / ' + DUR.toFixed(1) + ' s';
+  // 🔂 單句重複：過咗句尾即跳返句頭（seek 後即時重繪，唔會漏出句外）
+  if (singleLine >= 0 && !seeking) {
+    const L = lines[singleLine];
+    if (t >= L.e - 0.08 || t < L.s) {
+      seekTo(L.s / RATES[curRate].s);
+      renderCur(singleLine);
+      applyLit(L.s);
+      lines.forEach((LL,i) => LL.sec.classList.toggle('playing', i===singleLine));
+      return;
+    }
+  }
+  // A-B loop（原軸比較）
+  if (abA >= 0 && abB > abA && t >= abB && !seeking) { seekTo(abA / RATES[curRate].s); return; }
+  let li = lines.findIndex(L => t >= L.s && t < L.e);
+  if (li === -1 && t >= lines[lines.length-1].e && t < LAST_END + 0.2) li = lines.length - 1;
+  if (li !== curIdx) {
+    lines.forEach((L,i) => L.sec.classList.toggle('playing', i===li));
+    if (li !== -1) { renderCur(li); curIdx = li; }
+  }
+  applyLit(t);
+  // 計次：按播放開始倒數，完整唸完一遍（過 lastEnd）→ -1
+  if (counting && goal > 0 && t >= LAST_END && !passCounted) {
+    passCounted = true;
+    remain--;
+    updCounter();
+    const el = document.getElementById('remain');
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    if (remain <= 0) {
+      document.getElementById('done').textContent = '🎉 完成 ' + goal + ' 遍！功德迴向一切眾生 🙏';
+      document.getElementById('done').style.display = 'block';
+      AUDIO.pause();
+      document.getElementById('playBtn').textContent = '▶ 播放';
+      counting = false;
+    }
+  }
+  if (t < 1.0) passCounted = false;
+}
+AUDIO.addEventListener('timeupdate', tick);
+// rAF 驅動（60fps）：timeupdate 得 ~4Hz 太疏，highlight 慢半拍就係「唔準」嘅元兇
+(function loop() { tick(); requestAnimationFrame(loop); })();
+AUDIO.addEventListener('ended', () => {
+  document.getElementById('playBtn').textContent = '▶ 播放';
+  if (AUDIO.loop) {
+    passCounted = false;
+    if (!AUDIO.paused) AUDIO.play();
+    return;
+  }
+  if (counting && goal > 0 && !passCounted) {
+    passCounted = true; remain--; updCounter();
+    const el = document.getElementById('remain');
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    if (remain <= 0) {
+      document.getElementById('done').textContent = '🎉 完成 ' + goal + ' 遍！功德迴向一切眾生 🙏';
+      document.getElementById('done').style.display = 'block';
+      counting = false;
+    }
+  }
+});
+document.getElementById('playBtn').onclick = () => {
+  if (AUDIO.paused) {
+    if (goal > 0 && !counting) { counting = true; passCounted = false; }
+    document.getElementById('remain').classList.add('counting');
+    AUDIO.play();
+    document.getElementById('playBtn').textContent = '⏸ 暫停';
+  } else {
+    AUDIO.pause();
+    document.getElementById('playBtn').textContent = '▶ 播放';
+  }
+};
+document.getElementById('restartBtn').onclick = () => {
+  AUDIO.currentTime = 0;
+  passCounted = false;
+  if (goal > 0) { counting = true; }
+  document.getElementById('done').style.display = 'none';
+  AUDIO.play();
+  document.getElementById('playBtn').textContent = '⏸ 暫停';
+};
+document.getElementById('rate').onchange = e => {
+  const wasPlaying = !AUDIO.paused;
+  curRate = e.target.value;
+  const r = RATES[curRate];
+  AUDIO.src = r.f;
+  AUDIO.load();
+  if (wasPlaying) AUDIO.play();
+};
+document.getElementById('loopBtn').onclick = () => {
+  AUDIO.loop = !AUDIO.loop;
+  document.getElementById('loopBtn').classList.toggle('loopon', AUDIO.loop);
+  document.getElementById('loopBtn').textContent = AUDIO.loop ? '🔁 整段開' : '🔁 整段';
+};
+document.getElementById('lineLoopBtn').onclick = () => {
+  if (singleLine >= 0) {
+    singleLine = -1;
+    document.getElementById('lineLoopBtn').classList.remove('loopon');
+    document.getElementById('lineLoopBtn').textContent = '🔂 單句';
+    lines.forEach(L => L.sec.classList.remove('sololoop'));
+  } else {
+    // 開：用當前播放句（冇就第一句）
+    const t = AUDIO.currentTime * RATES[curRate].s;
+    let li = lines.findIndex(L => t >= L.s && t < L.e);
+    if (li === -1) li = 0;
+    singleLine = li;
+    abA = -1; abB = -1; updAB();
+    AUDIO.currentTime = lines[li].s / RATES[curRate].s;
+    document.getElementById('lineLoopBtn').classList.add('loopon');
+    document.getElementById('lineLoopBtn').textContent = '🔂 單句開';
+    lines.forEach((L,i) => L.sec.classList.toggle('sololoop', i === li));
+    if (AUDIO.paused) {
+      document.getElementById('playBtn').click();
+    }
+  }
+};
+document.getElementById('setA').onclick = () => {
+  abA = AUDIO.currentTime * RATES[curRate].s;
+  if (abB >= 0 && abA > abB) { const tmp = abA; abA = abB; abB = tmp; }
+  updAB();
+};
+document.getElementById('setB').onclick = () => {
+  abB = AUDIO.currentTime * RATES[curRate].s;
+  if (abA >= 0 && abB < abA) { const tmp = abA; abA = abB; abB = tmp; }
+  updAB();
+};
+document.getElementById('clrAB').onclick = () => { abA = -1; abB = -1; updAB(); };
+function updAB() {
+  const el = document.getElementById('abShow');
+  el.textContent = (abA >= 0 ? 'A:' + abA.toFixed(1) + 's' : 'A:–') + ' ' + (abB >= 0 ? 'B:' + abB.toFixed(1) + 's' : 'B:–');
+}
+lines.forEach((L, i) => L.sec.onclick = () => {
+  AUDIO.currentTime = L.s / RATES[curRate].s;
+  // 單句模式開住：㩒邊句就轉去唸嗰句
+  if (singleLine >= 0) {
+    singleLine = i;
+    lines.forEach((LL, ii) => LL.sec.classList.toggle('sololoop', ii === i));
+  }
+  if (AUDIO.paused) AUDIO.play();
+  document.getElementById('done').style.display = 'none';
+  document.getElementById('playBtn').textContent = '⏸ 暫停';
+});
+document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); document.getElementById('playBtn').click(); } });
+
+// 輸入影片連結對話框
+document.getElementById('linkGo').onclick = () => {
+  const url = document.getElementById('linkInput').value.trim();
+  const msg = document.getElementById('linkMsg');
+  if (!/^https?:\/\//i.test(url)) {
+    msg.className = 'msg'; msg.textContent = '⚠ 請輸入完整連結（http/https 開頭）';
+    return;
+  }
+  const copyOk = (() => {
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    return ok;
+  })();
+  msg.className = 'msg ok';
+  msg.textContent = copyOk
+    ? '✅ 已複製！貼去 Hermes 對話（例如話「整呢條經文片嘅跟唸版」），Hermes 會自動下載→轉錄→生成跟唸版。'
+    : '🔗 請手動複製連結，貼去 Hermes 對話：' + url;
+  document.getElementById('linkInput').select();
+};
+renderCur(0);
+updAB(); updCounter();
+</script>
+</body>
+</html>
