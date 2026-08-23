@@ -480,7 +480,7 @@ function showProgress(url) {
   }
   panel.style.display = 'block';
   clearInterval(pollTimer);
-  pollTimer = setInterval(() => pollStatus(url), 10000);
+  pollTimer = setInterval(() => pollStatus(url), 3000);
   pollStatus(url);
 }
 function renderStages(job) {
@@ -505,13 +505,22 @@ function renderStages(job) {
   }
 }
 async function pollStatus(url) {
+  let d = null;
+  // 即時狀態：直接問工廠（443，冇 CDN cache）
   try {
-    const r = await fetch('status.json?t=' + Date.now(), {cache:'no-store'});
-    if (!r.ok) return;
-    const d = await r.json();
-    const job = d.jobs && d.jobs[url];
-    renderStages(job ? job : {stage: 0, stageName: '等待 Hermes 開始處理', url: ''});
+    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/status?url=' + encodeURIComponent(url), {cache:'no-store'});
+    if (r.ok) d = await r.json();
   } catch(e) {}
+  // 後備：GitHub Pages status.json（有 CDN cache，會慢幾分鐘）
+  if (!d || !d.jobs) {
+    try {
+      const r = await fetch('status.json?t=' + Date.now(), {cache:'no-store'});
+      if (r.ok) d = await r.json();
+    } catch(e) {}
+  }
+  if (!d || !d.jobs) return;
+  const job = d.jobs[url];
+  renderStages(job ? job : {stage: 0, stageName: '等待開始處理', url: ''});
 }
 renderCur(0);
 updAB(); updCounter();
