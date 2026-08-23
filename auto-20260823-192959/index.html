@@ -68,18 +68,23 @@
   .line.sololoop { border-color:#7ee787; box-shadow:0 0 14px rgba(126,231,135,.35); background:rgba(126,231,135,.06); }
   .line.sololoop .num::after { content:" 🔂 重複中"; color:#7ee787; font-weight:700; }
   .done { text-align:center; font-size:20px; color:#ffd54a; margin-top:14px; letter-spacing:2px; display:none; }
+  .explain { max-width:860px; margin:0 auto 20px; background:rgba(255,213,74,.05); border:1px solid rgba(255,213,74,.25); border-radius:14px; padding:16px 18px; }
+  .explain h3 { font-size:14px; color:#ffd54a; margin-bottom:8px; letter-spacing:2px; }
+  .explain .roman { font-size:15px; line-height:2.1; color:#e8e0f5; letter-spacing:1px; padding:10px 14px; background:rgba(21,10,40,.5); border-radius:10px; margin-bottom:10px; white-space:pre-line; }
+  .explain .meaning { font-size:13.5px; line-height:1.9; color:#c9b8f0; }
   @media (max-width:760px) { .lines { grid-template-columns:1fr; } #curLine .syl { font-size:28px; } #curLine .ch b { font-size:28px; } .counter .big { font-size:18px; } }
 </style>
 </head>
 <body>
 <h1>金剛薩埵百字明咒（易讀版）</h1>
 <div class="sub">自動跟唸版（拉丁轉寫；中文音譯/解釋可貼 link 畀 Hermes 執靚）</div>
+<div class="explain" id="explainBox" style="display:none"></div>
 
 <div class="linkbox">
   <label>🔗 輸入任何經文影片連結：</label>
   <input id="linkInput" type="url" placeholder="https://weixin.qq.com/sph/... 或 YouTube 連結" spellcheck="false">
   <button class="btn alt" id="linkGo">生成跟唸版</button>
-  <div class="msg" id="linkMsg">貼入連結 → 㩒「生成跟唸版」→ 自動複製，貼去 Hermes 對話即自動轉成跟唸版（下載→轉錄→拼音→生成）。</div>
+  <div class="msg" id="linkMsg">貼入經文/佛咒影片連結 → 㩒「生成跟唸版」→ 自動工廠即刻開工（下載→轉錄→拼音→生成→上架，約 2–5 分鐘），進度 bar 實時跳。</div>
 </div>
 
 <audio id="au" src="audio_full.wav" preload="auto" style="display:none"></audio>
@@ -411,21 +416,42 @@ document.getElementById('linkGo').onclick = async () => {
     msg.className = 'msg'; msg.textContent = '⚠ 請輸入完整連結（http/https 開頭）';
     return;
   }
-  btn.textContent = '⏳ 複製中…';
-  const ok = await copyText(url);
-  btn.textContent = ok ? '✅ 已複製！' : '⚠ 自動複製失敗';
-  msg.className = 'msg' + (ok ? ' ok' : '');
-  msg.textContent = ok
-    ? '✅ 已複製！去 Hermes 對話貼上，話「整呢條嘅跟唸版」就得。'
-    : '自動複製唔得 — 下面條連結已幫你選取，長按／⌘C 手動複製：';
-  if (!ok) {
+  btn.textContent = '⏳ 提交中…';
+  msg.className = 'msg';
+  showProgress(url);  // 即刻顯示進度面板，唔使等 submit 返回
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 10000);  // 10 秒 timeout，唔會卡死
+  try {
+    // 全自動：直接交畀自動工廠（Mac mini），唔使經 Hermes 對話
+    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/submit?url=' +
+      encodeURIComponent(url) + '&title=' + encodeURIComponent(document.title), {method: 'POST', signal: ctl.signal});
+    clearTimeout(t);
+    const d = await r.json();
+    if (d.ok) {
+      btn.textContent = '✅ 已提交！';
+      msg.className = 'msg ok';
+      msg.textContent = '✅ 已交畀自動工廠！進度 bar 會逐格跳，完成會彈出跟唸版連結（約 2–5 分鐘）。';
+      return;
+    }
+    throw new Error(d.error || 'submit failed');
+  } catch(e) {
+    clearTimeout(t);
+    // 工廠連唔到（Mac mini 關機/網絡）→ fallback 舊流程：複製去 Hermes 對話
+    btn.textContent = '⚠ 工廠離線';
+    const ok = await copyText(url);
+    btn.textContent = ok ? '⚠ 已複製（後備）' : '⚠ 複製失敗';
+    msg.className = 'msg';
+    msg.textContent = '自動工廠暫時連唔到（' + (e.message || e) + '）— 下面條連結已經選取，長按／點兩下就可以複製，再貼去 Hermes 對話一樣得：';
     const u = document.createElement('div');
-    u.style.cssText = 'margin-top:6px;padding:6px 10px;background:#241545;border-radius:8px;word-break:break-all;color:#ffd54a;font-size:12px;';
+    u.style.cssText = 'margin-top:6px;padding:6px 10px;background:#241545;border-radius:8px;word-break:break-all;color:#ffd54a;font-size:12px;user-select:all;-webkit-user-select:all;';
     u.textContent = url;
     msg.appendChild(u);
+    const c2 = document.createElement('button');
+    c2.style.cssText = 'margin-top:8px;background:#7c5cff;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;';
+    c2.textContent = '📋 手動複製';
+    c2.onclick = async () => { c2.textContent = (await copyText(url)) ? '✅ 複製咗！' : '⚠ 再試（長按下面條連結）'; };
+    msg.appendChild(c2);
   }
-  document.getElementById('linkInput').select();
-  showProgress(url);
 };
 
 // ── 處理進度 bar：提交後輪詢 status.json（Hermes 每階段 git push 更新）──
@@ -444,7 +470,7 @@ function showProgress(url) {
   }
   panel.style.display = 'block';
   clearInterval(pollTimer);
-  pollTimer = setInterval(() => pollStatus(url), 10000);
+  pollTimer = setInterval(() => pollStatus(url), 3000);
   pollStatus(url);
 }
 function renderStages(job) {
@@ -469,14 +495,42 @@ function renderStages(job) {
   }
 }
 async function pollStatus(url) {
+  let d = null;
+  // 即時狀態：直接問工廠（443，冇 CDN cache）
   try {
-    const r = await fetch('status.json?t=' + Date.now(), {cache:'no-store'});
-    if (!r.ok) return;
-    const d = await r.json();
-    const job = d.jobs && d.jobs[url];
-    renderStages(job ? job : {stage: 0, stageName: '等待 Hermes 開始處理', url: ''});
+    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/status?url=' + encodeURIComponent(url), {cache:'no-store'});
+    if (r.ok) d = await r.json();
   } catch(e) {}
+  // 後備：GitHub Pages status.json（有 CDN cache，會慢幾分鐘）
+  if (!d || !d.jobs) {
+    try {
+      const r = await fetch('status.json?t=' + Date.now(), {cache:'no-store'});
+      if (r.ok) d = await r.json();
+    } catch(e) {}
+  }
+  if (!d || !d.jobs) return;
+  const job = d.jobs[url];
+  renderStages(job ? job : {stage: 0, stageName: '等待開始處理', url: ''});
 }
+// ── 經文中文解釋（explanations.json：音譯全文＋白話義理）──
+(async () => {
+  try {
+    const r = await fetch('../explanations.json?t=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) return;
+    const lib = await r.json();
+    const slug = location.pathname.split('/').filter(Boolean).pop() || '';
+    let ex = lib[slug];
+    if (!ex) {
+      const t = document.title;
+      ex = Object.values(lib).find(e => (e.match || []).some(k => t.includes(k)));
+    }
+    if (!ex) return;
+    const esc2 = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const box = document.getElementById('explainBox');
+    box.style.display = 'block';
+    box.innerHTML = '<h3>📖 經文解釋</h3><div class="roman">' + esc2(ex.roman) + '</div><div class="meaning">' + esc2(ex.meaning) + '</div>';
+  } catch(e) {}
+})();
 renderCur(0);
 updAB(); updCounter();
 </script>
