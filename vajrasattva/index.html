@@ -291,7 +291,15 @@ function tick() {
           document.getElementById('lineLoopBtn').classList.remove('loopon');
           document.getElementById('lineLoopBtn').textContent = '🔂 單句';
           lines.forEach(LL => LL.sec.classList.remove('sololoop'));
+          AUDIO.pause();
+          document.getElementById('playBtn').textContent = '▶ 播放';
+          return;
         }
+        // 未唸夠遍數：自動由句頭再唸（唔停）
+        seekTo(L.s / RATES[curRate].s);
+        renderCur(singleLine);
+        applyLit(L.s);
+        return;
       }
       AUDIO.pause();
       document.getElementById('playBtn').textContent = '▶ 播放';
