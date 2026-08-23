@@ -1,12 +1,5 @@
 {
  "jobs": {
-  "https://www.youtube.com/shorts/lY8CQHcZtf8": {
-   "title": "BGM測試",
-   "stage": 6,
-   "stageName": "已上架",
-   "url": "https://ga1811mail.github.io/mantra-karaoke/auto-20260823-182709/",
-   "updated": "2026-08-23T18:27:12+0800"
-  },
   "https://www.youtube.com/watch?v=RnY9ze-Iag0": {
    "title": "楞嚴咒心自動測試",
    "stage": 6,
@@ -15,5 +8,5 @@
    "updated": "2026-08-23T18:20:36+0800"
   }
  },
- "_last": "stage 6 已上架"
+ "_last": "remove BGM 誤上架"
 }
