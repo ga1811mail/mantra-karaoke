@@ -451,7 +451,11 @@ document.getElementById('linkGo').onclick = async () => {
     const ok = await copyText(url);
     btn.textContent = ok ? '⚠ 已複製（後備）' : '⚠ 複製失敗';
     msg.className = 'msg';
-    msg.textContent = '自動工廠暫時連唔到（' + (e.message || e) + '）— 已幫你複製連結，貼去 Hermes 對話一樣得。';
+    msg.textContent = '自動工廠暫時連唔到（' + (e.message || e) + '）— 下面條連結已經選取，長按／點兩下就可以複製，再貼去 Hermes 對話一樣得：';
+    const u = document.createElement('div');
+    u.style.cssText = 'margin-top:6px;padding:6px 10px;background:#241545;border-radius:8px;word-break:break-all;color:#ffd54a;font-size:12px;user-select:all;-webkit-user-select:all;';
+    u.textContent = url;
+    msg.appendChild(u);
   }
 };
 
