@@ -8,12 +8,12 @@
    "updated": "2026-08-23T18:28:37+0800"
   },
   "https://weixin.qq.com/sph/AEHPXYMxX9": {
-   "title": "楞嚴咒心 · 卡拉OK 跟唸",
-   "stage": -1,
-   "stageName": "❌ 失敗：WARNING: Your yt-dlp version (2026.03.17) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from Py",
+   "title": "test",
+   "stage": 5,
+   "stageName": "上架公開站",
    "url": "",
-   "updated": "2026-08-24T22:43:27+0800"
+   "updated": "2026-08-24T22:47:12+0800"
   }
  },
- "_last": "stage -1 ❌ 失敗：WARNING: Your yt-dlp version (2026.03.17) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from Py"
+ "_last": "stage 5 上架公開站"
 }
