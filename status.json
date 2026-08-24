@@ -9,11 +9,11 @@
   },
   "https://weixin.qq.com/sph/AEHPXYMxX9": {
    "title": "test",
-   "stage": 5,
-   "stageName": "上架公開站",
-   "url": "",
+   "stage": 6,
+   "stageName": "已上架",
+   "url": "https://ga1811mail.github.io/mantra-karaoke/auto-20260824-224712/",
    "updated": "2026-08-24T22:47:12+0800"
   }
  },
- "_last": "stage 5 上架公開站"
+ "_last": "stage 6 已上架"
 }
