@@ -6,7 +6,14 @@
    "stageName": "❌ 失敗：冇清晰人聲唸誦（疑似純音樂/BGM，或轉錄結果太短）",
    "url": "",
    "updated": "2026-08-23T18:28:37+0800"
+  },
+  "https://weixin.qq.com/sph/AEHPXYMxX9": {
+   "title": "楞嚴咒心 · 卡拉OK 跟唸",
+   "stage": -1,
+   "stageName": "❌ 失敗：WARNING: Your yt-dlp version (2026.03.17) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from Py",
+   "url": "",
+   "updated": "2026-08-24T22:43:27+0800"
   }
  },
- "_last": "deleted auto-20260823-213117"
+ "_last": "stage -1 ❌ 失敗：WARNING: Your yt-dlp version (2026.03.17) is older than 90 days!\n         It is strongly recommended to always use the latest version.\n         You installed yt-dlp with pip or using the wheel from Py"
 }
