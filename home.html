@@ -44,11 +44,13 @@
   .ppanel .pnote a { color:#7ee787; }
   .foot { text-align:center; margin-top:40px; font-size:12px; color:#6a5a95; letter-spacing:1px; }
   .ver { position:fixed; top:8px; left:10px; font-size:11px; color:#8b7fb0; background:rgba(21,10,40,.75); border:1px solid rgba(107,79,176,.4); padding:2px 9px; border-radius:10px; z-index:99; }
+  .plhead { display:none; margin:34px 0 4px; font-size:20px; font-weight:700; color:#ffd54a; }
+  .plhead .cnt { font-size:12px; font-weight:400; color:#8b7fb0; margin-left:8px; }
   @media (max-width:640px) { .grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
-<div class="ver">v4.9</div>
+<div class="ver">v4.9.4</div>
 <h1>📿 經文跟唸版</h1>
 <div class="sub">卡拉OK 式逐字拼音跟唸 ｜ 速度可調 ｜ 單句重複 ｜ 遍數計次</div>
 
@@ -73,6 +75,9 @@
   </div>
 </div>
 
+<div class="plhead" id="plhead">📜 播放清單<span class="cnt" id="plcnt"></span></div>
+<div class="grid" id="plgrid"></div>
+
 <div class="linkbox">
   <label>🔗 有其他經文影片連結想轉做跟唸版？</label>
   <div class="row">
@@ -95,7 +100,18 @@ async function deleteSlug(slug, cardEl) {
     if (d.ok) {
       const wrap = cardEl.closest('.cwrap') || cardEl;
       wrap.style.opacity = '.3';
-      setTimeout(() => wrap.remove(), 400);
+      setTimeout(() => {
+        wrap.remove();
+        // 同步播放清單計數
+        const grid = document.querySelector('#plgrid');
+        const head = document.getElementById('plhead');
+        if (grid && head) {
+          const n = grid.querySelectorAll('.cwrap').length;
+          head.style.display = n ? 'block' : 'none';
+          const cnt = document.getElementById('plcnt');
+          if (cnt) cnt.textContent = n ? `${n} 首自動上架` : '';
+        }
+      }, 400);
       return;
     }
     alert('刪除失敗：' + (d.error || '未知錯誤'));
@@ -108,34 +124,58 @@ document.addEventListener('click', e => {
   if (b) deleteSlug(b.dataset.slug, b);
 });
 
-// ── 自動上架卡片：讀 status.json 列出所有已上架嘅經文 ──
-async function loadAutoCards() {
+// ── 播放清單：讀 playlist.json（權威：上架自動入＋刪除自動清）列晒所有成功卡 ──
+async function loadAutoCards(newJob) {
+  const grid = document.querySelector('#plgrid');
+  const addCard = job => {
+    if (!job || !job.url) return;
+    const slug = job.url.split('/').filter(Boolean).slice(-1)[0] || '';
+    if (!slug || document.querySelector(`#plgrid a[href$="/${slug}/"]`)) return;
+    const cwrap = document.createElement('div');
+    cwrap.className = 'cwrap';
+    const a = document.createElement('a');
+    a.className = 'card'; a.href = job.url;
+    const name = String(job.title || '經文').split(/[-|｜]/)[0].trim().slice(0, 18);
+    a.innerHTML = `<div class="name">${name}</div>
+      <div class="desc">自動跟唸版（中文音譯＋逐句註解）· 快誦原速＋慢速練習</div>
+      <span class="tag">🤖 自動生成</span> <span class="tag">🔂 單句重複</span>${job.date ? ` <span class="tag">📅 ${job.date}</span>` : ''}`;
+    const del = document.createElement('button');
+    del.className = 'del'; del.dataset.slug = slug; del.title = '刪除呢個經文';
+    del.textContent = '🗑 刪除';
+    const exp = document.createElement('button');
+    exp.className = 'exp'; exp.dataset.slug = slug; exp.dataset.title = name;
+    exp.textContent = '📖 解釋';
+    cwrap.appendChild(a); cwrap.appendChild(exp); cwrap.appendChild(del);
+    grid.appendChild(cwrap);
+  };
+  const showHead = () => {
+    const head = document.getElementById('plhead');
+    if (!head) return;
+    const n = grid.querySelectorAll('.cwrap').length;
+    head.style.display = n ? 'block' : 'none';
+    const cnt = document.getElementById('plcnt');
+    if (cnt) cnt.textContent = n ? `${n} 首自動上架` : '';
+  };
+  try {
+    const r = await fetch('playlist.json?t=' + Date.now(), {cache:'no-store'});
+    if (r.ok) {
+      const pl = await r.json();  // {slug: {title,url,date}}
+      Object.values(pl || {}).forEach(e => addCard(e));
+      addCard(newJob);  // 啱啱上架嗰張：playlist 有 CDN cache，本地即時補
+      showHead();
+      return;
+    }
+  } catch(e) {}
+  // 舊版 fallback：status.json（未有 playlist 記錄時期嘅卡）
   try {
     const r = await fetch('status.json?t=' + Date.now(), {cache:'no-store'});
     if (!r.ok) return;
     const d = await r.json();
-    const grid = document.querySelector('.grid');
     Object.values(d.jobs || {}).forEach(job => {
       if (!job.url || (job.stage || 0) < 6) return;
-      const slug = job.url.split('/').filter(Boolean).slice(-1)[0] || '';
-      if (!slug || document.querySelector(`a[href="${slug}/"]`)) return;
-      const cwrap = document.createElement('div');
-      cwrap.className = 'cwrap';
-      const a = document.createElement('a');
-      a.className = 'card'; a.href = job.url;
-      const name = String(job.title || '經文').split(/[-|｜]/)[0].trim().slice(0, 18);
-      a.innerHTML = `<div class="name">${name}</div>
-        <div class="desc">自動跟唸版（逐字拼音 highlight）· 快誦原速＋慢速練習</div>
-        <span class="tag">🤖 自動生成</span> <span class="tag">🔂 單句重複</span>`;
-      const del = document.createElement('button');
-      del.className = 'del'; del.dataset.slug = slug; del.title = '刪除呢個經文';
-      del.textContent = '🗑 刪除';
-      const exp = document.createElement('button');
-      exp.className = 'exp'; exp.dataset.slug = slug; exp.dataset.title = name;
-      exp.textContent = '📖 解釋';
-      cwrap.appendChild(a); cwrap.appendChild(exp); cwrap.appendChild(del);
-      grid.appendChild(cwrap);
+      addCard(job);
     });
+    showHead();
   } catch(e) {}
 }
 loadAutoCards();
@@ -293,14 +333,39 @@ function renderStages(job) {
   const note = document.getElementById('pnote');
   if (st >= 6) {
     const u = job.url || '';
-    note.innerHTML = u
-      ? `✅ <b>已上架！</b> <a href="${u}" target="_blank">開啟跟唸版 →</a>`
-      : '✅ 已上架！';
-    clearInterval(pollTimer);
-    loadAutoCards();  // 目錄自動加卡
+    if (!u) { note.textContent = '✅ 已上架！'; clearInterval(pollTimer); loadAutoCards(); return; }
+    pollDone(u, note, job);
   } else {
     note.textContent = '⏳ ' + (job.stageName || STAGES[st] || '處理中') + '…（每 10 秒自動更新）';
   }
+}
+const READY = {};
+const READY_TRIES = {};
+function pollDone(u, note, job) {
+  // 等 GitHub Pages build（25–55 秒）先出開啟掣，避免撳入去撞 404；
+  // 上限 120 秒照出（Pages 快取慢時唔好永遠等）
+  READY_TRIES[u] = (READY_TRIES[u] || 0) + 1;
+  if (READY[u] === 1 || READY_TRIES[u] > 40) {
+    note.innerHTML = '✅ <b>已上架！</b> <a href="' + u + '">開啟跟唸版 →</a>';
+    clearInterval(pollTimer);
+    loadAutoCards(job);  // 即時加卡入播放清單，唔使等 CDN
+    return;
+  }
+  checkReady(u).then(ok => {
+    if (ok) {
+      READY[u] = 1;
+      note.innerHTML = '✅ <b>已上架！</b> <a href="' + u + '">開啟跟唸版 →</a>';
+      clearInterval(pollTimer);
+      loadAutoCards(job);
+    } else {
+      note.textContent = '⏳ 已上架 — 公開站發佈中（約 30 秒），自動偵測完成後彈掣…';
+    }
+  });
+}
+function checkReady(u) {
+  return fetch(u + '?t=' + Date.now(), {method:'HEAD', cache:'no-store'})
+    .then(r => r.ok)
+    .catch(() => false);
 }
 async function pollStatus(url) {
   let d = null;

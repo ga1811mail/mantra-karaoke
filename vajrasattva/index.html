@@ -78,7 +78,7 @@
 </style>
 </head>
 <body>
-<div class="topbar"><span class="ver">v4.9</span><a class="homebtn" href="../home.html">🏠 主頁</a></div>
+<div class="topbar"><span class="ver">v4.9.4</span><a class="homebtn" href="../home.html">🏠 主頁</a></div>
 <h1>金剛薩埵百字明</h1>
 <div class="sub">KARAOKE 跟唸版 ｜ 播放時逐字亮起，跟住唸 ｜ 空格=播放/暫停</div>
 
@@ -551,15 +551,38 @@ function renderStages(job) {
   const note = document.getElementById('pnote');
   if (st >= 6) {
     const u = job.url || '';
-    note.innerHTML = u
-      ? `✅ <b>已上架！</b> <a href="${u}" target="_blank">開啟跟唸版 →</a>`
-      : '✅ 已上架！';
-    clearInterval(pollTimer);
+    if (!u) { note.textContent = '✅ 已上架！'; clearInterval(pollTimer); return; }
+    pollDone(u, note);
   } else {
     note.textContent = '⏳ ' + (job.stageName || STAGES[st] || '處理中') + '…（每 10 秒自動更新）';
   }
 }
-async function pollStatus(url) {
+const READY = {};
+const READY_TRIES = {};
+function pollDone(u, note) {
+  // 等 GitHub Pages build（25–55 秒）先出開啟掣，避免撳入去撞 404；
+  // 上限 120 秒照出（Pages 快取慢時唔好永遠等）
+  READY_TRIES[u] = (READY_TRIES[u] || 0) + 1;
+  if (READY[u] === 1 || READY_TRIES[u] > 40) {
+    note.innerHTML = '✅ <b>已上架！</b> <a href="' + u + '">開啟跟唸版 →</a>';
+    clearInterval(pollTimer);
+    return;
+  }
+  checkReady(u).then(ok => {
+    if (ok) {
+      READY[u] = 1;
+      note.innerHTML = '✅ <b>已上架！</b> <a href="' + u + '">開啟跟唸版 →</a>';
+      clearInterval(pollTimer);
+    } else {
+      note.textContent = '⏳ 已上架 — 公開站發佈中（約 30 秒），自動偵測完成後彈掣…';
+    }
+  });
+}
+function checkReady(u) {
+  return fetch(u + '?t=' + Date.now(), {method:'HEAD', cache:'no-store'})
+    .then(r => r.ok)
+    .catch(() => false);
+}async function pollStatus(url) {
   let d = null;
   // 即時狀態：直接問工廠（443，冇 CDN cache）
   try {
