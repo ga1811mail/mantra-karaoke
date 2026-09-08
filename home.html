@@ -13,7 +13,9 @@
   .navbtn.exit { border-color:rgba(255,120,120,.5); background:rgba(255,80,80,.12); color:#ffb0b0; }
   .t-title { flex:1; text-align:center; font-size:23px; font-weight:700; color:#ffd54a; letter-spacing:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .ver { font-size:13px; color:#9b8cc0; background:rgba(21,10,40,.8); border:1px solid rgba(107,79,176,.45); padding:3px 10px; border-radius:12px; flex-shrink:0; }
-  h1 { text-align:center; font-size:34px; letter-spacing:6px; color:#ffd54a; text-shadow:0 0 20px rgba(255,213,74,.4); margin:30px 0 4px; }
+  h1 { text-align:center; font-size:34px; letter-spacing:6px; color:#ffd54a; text-shadow:0 0 20px rgba(255,213,74,.4); margin:0; }
+  .hrow { position:relative; max-width:760px; margin:30px auto 4px; }
+  .hrow .ico { position:absolute; right:calc(50% + 1.9em); top:50%; transform:translateY(-50%); font-size:34px; line-height:1; }
   .sub { text-align:center; font-size:16px; color:#b9a8e8; letter-spacing:2px; margin-bottom:28px; }
   /* 大字經文卡：成張卡都係撳區 */
   .grid { max-width:760px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:18px; }
@@ -28,16 +30,16 @@
   .admbtn { display:block; max-width:760px; margin:26px auto 0; min-height:64px; width:100%; border-radius:18px; border:2px dashed rgba(155,140,192,.5); background:rgba(155,140,192,.07); color:#c9b8f0; font-size:20px; font-weight:600; cursor:pointer; }
   .admbtn:active { transform:scale(.98); background:rgba(155,140,192,.16); }
   .foot { text-align:center; margin-top:30px; font-size:13px; color:#6a5a95; letter-spacing:1px; line-height:1.8; }
-  @media (max-width:480px) { .card .nm { font-size:25px; } .t-title { font-size:19px; } h1 { font-size:28px; } }
+  @media (max-width:480px) { .card .nm { font-size:25px; } .t-title { font-size:19px; } h1 { font-size:28px; } .hrow .ico { font-size:28px; } }
 </style>
 </head>
 <body>
 <div class="topnav">
-  <span class="ver">v4.16.0</span>
+  <span class="ver">v4.17.0</span>
   <div style="flex:1"></div>
   <a class="navbtn exit" href="exit.html" title="完全退出">✕ 退出</a>
 </div>
-<h1>📿 選經</h1>
+<div class="hrow"><span class="ico" aria-hidden="true">📿</span><h1>選經</h1></div>
 <div class="sub">揀經文 → 揀速度設置 → 跟住讀經</div>
 
 <div class="grid" id="grid"></div>
