@@ -23,11 +23,11 @@
   },
   "https://youtube.com/shorts/-zDYcq_UUH8?si=m3UY5ccDVifNfrsl": {
    "title": "📿 經文跟唸版",
-   "stage": -1,
-   "stageName": "❌ 失敗：轉錄唔到人聲（可能係純音樂/BGM 片，或者人聲太弱）",
+   "stage": 5,
+   "stageName": "上架公開站",
    "url": "",
-   "updated": "2026-09-08T13:05:04+0800"
+   "updated": "2026-09-08T13:24:39+0800"
   }
  },
- "_last": "stage -1 ❌ 失敗：轉錄唔到人聲（可能係純音樂/BGM 片，或者人聲太弱）"
+ "_last": "stage 5 上架公開站"
 }
