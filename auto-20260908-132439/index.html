@@ -9,7 +9,7 @@
   body.f2{ --fs:100px; }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
-  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; padding:8px 12px; }
+  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; padding:8px 12px; padding-bottom:calc(8px + env(safe-area-inset-bottom)); }
   .topnav, .stage, .ctl, .done { width:100%; max-width:880px; margin-left:auto; margin-right:auto; }
   /* ── 頂欄（固定頂部，唔隨內容郁）：←返回 / title / 版本 / ✕完全退出 ── */
   .topnav { flex:none; display:flex; align-items:center; gap:8px; margin-bottom:8px; }
@@ -22,13 +22,13 @@
   .stage { flex:1 1 auto; min-height:0; overflow:hidden; background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.16); border-radius:26px; padding:18px 14px; margin-top:6px; margin-bottom:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
   #curLine { width:100%; min-height:0; display:flex; align-items:center; justify-content:center; }
   #curLine > .syl { width:100%; }
-  #curLine .syl { width:100%; font-size:var(--fs); line-height:1.55; display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-end; gap:6px 14px; }
+  #curLine .syl { width:100%; font-size:var(--fs); line-height:1.55; display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-end; gap:10px 18px; }
   #curLine .grp { display:inline-flex; flex-wrap:wrap; justify-content:center; gap:3px; }
   #curLine .ch { display:inline-flex; flex-direction:column; align-items:center; margin:0 1px; padding:3px 7px; border-radius:14px; transition:all .12s; }
-  #curLine .ch b { font-size:var(--fs); color:#e8e0f5; font-weight:800; line-height:1.35; }
-  #curLine .ch i { font-style:normal; font-size:calc(var(--fs) * 0.34); color:#9b8cc0; margin-top:3px; letter-spacing:.5px; }
+  #curLine .ch b { font-size:var(--fs); color:#e8e0f5; font-weight:800; line-height:1.3; display:block; }
+  #curLine .ch i { font-style:normal; font-size:calc(var(--fs) * 0.34); color:#9b8cc0; margin-top:7px; letter-spacing:.5px; line-height:1.15; display:block; }
   body.nopy #curLine .ch i { display:none; }
-  #curLine .ch.lit { background:linear-gradient(180deg,rgba(255,213,74,.32),rgba(255,157,46,.15)); box-shadow:0 0 26px rgba(255,213,74,.6); transform:scale(1.02); }
+  #curLine .ch.lit { background:linear-gradient(180deg,rgba(255,213,74,.34),rgba(255,157,46,.16)); box-shadow:0 0 8px rgba(255,213,74,.35); }
   #curLine .ch.lit b { color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.95); }
   #curLine .ch.lit i { color:#ffd54a; }
   /* 中文註解（細字） */
@@ -181,11 +181,11 @@ function fitStage() {
   st.style.removeProperty('--fs');            // 每次由完整字級重新 fit
   const cs = getComputedStyle(st);
   const pt = parseFloat(cs.paddingTop) || 0, pb = parseFloat(cs.paddingBottom) || 0;
-  const floor = Math.max(34, FS_BASE * 0.62);
-  for (let it = 0; it < 6; it++) {
-    const av = st.clientHeight - pt - pb;
+  const floor = Math.max(30, FS_BASE * 0.45);
+  for (let it = 0; it < 14; it++) {
+    const av = st.clientHeight - pt - pb - 4;   // 留 4px 保險，任何情況唔掂邊
     const need = st.scrollHeight - pt - pb;
-    if (need <= av + 1) break;                 // 放得落，用返完整字級
+    if (need <= av) break;                 // 放得落，用返完整字級
     let cur = parseFloat(getComputedStyle(st).getPropertyValue('--fs'));
     if (!(cur > 0)) cur = FS_BASE;
     const nfs = Math.max(floor, Math.floor(cur * (av / need) * 100) / 100);
