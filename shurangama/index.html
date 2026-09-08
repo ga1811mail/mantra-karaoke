@@ -4,82 +4,66 @@
 <meta charset="UTF-8">
 <title>楞嚴咒心 · 卡拉OK 跟唸</title>
 <style>
-  :root{ --fs:22px; --fs-min:14px; --btn-h:64px; --btn-fs:22px; --pad:18px; }
+  :root{ --fs:40px; --ui:16px; --pad:16px; }
+  body.f1{ --fs:50px; }
+  body.f2{ --fs:62px; }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
-  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:16px 14px 40px; }
-  body.f1 { --fs:26px; --fs-min:15px; --btn-h:72px; --btn-fs:24px; --pad:22px; }
-  body.f2 { --fs:32px; --fs-min:17px; --btn-h:84px; --btn-fs:28px; --pad:26px; }
-  h1 { text-align:center; font-size:calc(var(--fs) * 0.9); letter-spacing:3px; color:#ffd54a; margin-bottom:3px; text-shadow:0 0 18px rgba(255,213,74,.35); }
-  .sub { text-align:center; font-size:var(--fs-min); color:#9b8cc0; margin-bottom:14px; letter-spacing:1px; }
-  /* ── 頂欄：←返回 / title / 版本 / ✕完全退出（所有頁面共用）── */
-  .topnav { max-width:880px; margin:0 auto 12px; display:flex; align-items:center; gap:8px; }
-  .topnav .t-title { flex:1; text-align:center; font-size:calc(var(--fs) * 0.75); font-weight:700; color:#e8e0f5; letter-spacing:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .navbtn { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:56px; min-width:96px; padding:6px 14px; border-radius:16px; font-size:var(--fs-min); font-weight:700; text-decoration:none; cursor:pointer; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.12); color:#ffd54a; transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
+  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:10px 12px 26px; }
+  /* ── 頂欄：←返回 / title / 版本 / ✕完全退出 ── */
+  .topnav { max-width:880px; margin:0 auto 10px; display:flex; align-items:center; gap:8px; }
+  .topnav .t-title { flex:1; text-align:center; font-size:20px; font-weight:700; color:#e8e0f5; letter-spacing:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .navbtn { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:52px; min-width:88px; padding:4px 14px; border-radius:16px; font-size:16px; font-weight:700; text-decoration:none; cursor:pointer; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.12); color:#ffd54a; transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
   .navbtn:active { transform:scale(.94); }
   .navbtn.exit { border-color:rgba(220,90,90,.5); background:rgba(220,90,90,.12); color:#ff9d9d; }
-  .navbtn:first-child { margin-right:0; }
   .ver { font-size:11px; color:#8b7fb0; background:rgba(21,10,40,.6); border:1px solid rgba(107,79,176,.35); padding:1px 7px; border-radius:8px; white-space:nowrap; }
+  /* ── 讀經大字舞台：當前句 ＋ 註解 ＋ 下一句預告（佔最多位） ── */
+  .stage { max-width:880px; margin:6px auto; min-height:52vh; background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.16); border-radius:26px; padding:26px 16px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  #curLine { width:100%; text-align:center; }
+  #curLine .syl { font-size:var(--fs); line-height:1.55; display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-end; gap:6px 14px; }
+  #curLine .grp { display:inline-flex; flex-wrap:wrap; justify-content:center; gap:3px; }
+  #curLine .ch { display:inline-flex; flex-direction:column; align-items:center; margin:0 1px; padding:3px 7px; border-radius:14px; transition:all .12s; }
+  #curLine .ch b { font-size:var(--fs); color:#e8e0f5; font-weight:800; line-height:1.35; }
+  #curLine .ch i { font-style:normal; font-size:calc(var(--fs) * 0.34); color:#9b8cc0; margin-top:3px; letter-spacing:.5px; }
+  body.nopy #curLine .ch i { display:none; }
+  #curLine .ch.lit { background:linear-gradient(180deg,rgba(255,213,74,.32),rgba(255,157,46,.15)); box-shadow:0 0 26px rgba(255,213,74,.6); transform:scale(1.07); }
+  #curLine .ch.lit b { color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.95); }
+  #curLine .ch.lit i { color:#ffd54a; }
+  /* 中文註解（細字） */
+  #noteLine { margin-top:16px; font-size:calc(var(--fs) * 0.36); color:#c9b8f0; text-align:center; line-height:1.6; min-height:1.6em; padding:0 6px; }
+  body.nonote #noteLine { display:none; }
+  /* 下一句預告（暗色，唔 highlight） */
+  #nextLine { margin-top:18px; font-size:calc(var(--fs) * 0.42); color:#b9a8e8; opacity:.92; text-align:center; line-height:1.65; letter-spacing:1px; min-height:1.65em; padding:0 8px; }
+  #nextLine .nxlabel { color:#8b7fb0; margin-right:10px; letter-spacing:1px; }
+  /* ── 控制：淨播放/暫停大掣 ＋ 計次 ── */
+  .ctl { max-width:880px; margin:12px auto 2px; text-align:center; }
   .bigbtn { display:inline-flex; align-items:center; justify-content:center; min-height:var(--btn-h); padding:8px 22px; border:none; border-radius:18px; font-size:var(--btn-fs); font-weight:800; cursor:pointer; background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; box-shadow:0 4px 14px rgba(255,157,46,.35); transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
   .bigbtn:active { transform:scale(.95); filter:brightness(1.12); }
-  .bigbtn.alt { background:linear-gradient(135deg,#6a4fb0,#4a3590); color:#e8e0f5; box-shadow:none; }
-  .bigbtn.on { box-shadow:0 0 0 3px #fff inset, 0 0 18px rgba(255,213,74,.5); }
-  .bigbtn.loopon { box-shadow:0 0 0 3px #fff inset, 0 0 18px rgba(255,213,74,.5); background:linear-gradient(135deg,#ffb300,#ff8f00); color:#3a2500; }
-  .minibtn.loopon { box-shadow:0 0 0 2px #fff inset, 0 0 10px rgba(255,213,74,.5); }
   .bigbtn.green { background:linear-gradient(135deg,#3ecf6e,#1f9d4f); color:#062b12; box-shadow:0 4px 14px rgba(62,207,110,.3); }
-  .ctlrow { max-width:880px; margin:0 auto 12px; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px; }
-  .timer { font-size:var(--fs-min); color:#b9a8e8; font-variant-numeric:tabular-nums; }
-  /* ── 播放器 ── */
-  .player { position:sticky; top:0; z-index:50; background:rgba(21,10,40,.94); backdrop-filter:blur(8px); border-bottom:1px solid rgba(255,213,74,.18); padding:10px 8px; }
-  .progress { height:10px; background:#3a2a66; border-radius:5px; overflow:hidden; margin-bottom:10px; }
-  .progress i { display:block; height:100%; width:0%; background:linear-gradient(90deg,#ffd54a,#ff9d2e); }
-  .counter { display:inline-flex; align-items:center; justify-content:center; gap:10px; background:rgba(255,213,74,.1); border:2px solid rgba(255,213,74,.4); border-radius:18px; padding:8px 18px; min-height:var(--btn-h); }
-  .counter .big { font-size:calc(var(--fs) * 1.15); font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:44px; text-align:center; }
-  .counter .big.counting { color:#7ee787; }
-  .counter .big.flash { animation:flash .5s; }
+  :root{ --btn-h:88px; --btn-fs:30px; }
+  .playbig { width:min(250px,82vw); border-radius:26px; }
+  .cntrow { margin:10px auto 0; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .cntrow .big { font-size:32px; font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:52px; text-align:center; }
+  .cntrow .big.counting { color:#7ee787; }
+  .cntrow .big.flash { animation:flash .5s; }
   @keyframes flash { 0%{transform:scale(1.6); color:#fff;} 100%{transform:scale(1);} }
-  .cgoal { font-size:var(--fs-min); color:#c9b8f0; }
-  /* ── 大字舞台 ── */
-  .stage { max-width:880px; margin:14px auto 0; background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.14); border-radius:20px; padding:26px 16px; min-height:240px; display:flex; align-items:center; justify-content:center; }
-  #curLine { text-align:center; width:100%; }
-  #curLine .syl { font-size:var(--fs); line-height:1.55; display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
-  #curLine .grp { display:inline-flex; flex-wrap:wrap; gap:3px; }
-  #curLine .ch { display:inline-flex; flex-direction:column; align-items:center; margin:0 1px; padding:3px 7px; border-radius:10px; transition:all .12s; }
-  #curLine .ch b { font-size:calc(var(--fs) * 1.1); color:#e8e0f5; font-weight:800; line-height:1.3; }
-  #curLine .ch i { font-style:normal; font-size:calc(var(--fs-min) * 0.95); color:#9b8cc0; margin-top:3px; letter-spacing:.5px; }
-  body.nopy #curLine .ch i, body.nopy .lines .ch i { display:none; }
-  #curLine .ch.lit { background:linear-gradient(180deg,rgba(255,213,74,.3),rgba(255,157,46,.14)); box-shadow:0 0 24px rgba(255,213,74,.55); transform:scale(1.08); }
-  #curLine .ch.lit b { color:#ffd54a; text-shadow:0 0 16px rgba(255,213,74,.95); }
-  #curLine .ch.lit i { color:#ffd54a; }
-  #curLine .note { margin-top:22px; font-size:calc(var(--fs) * 0.72); color:#c9b8f0; letter-spacing:1px; min-height:30px; line-height:1.6; }
-  body.nonote #curLine .note, body.nonote .lines .note { display:none; }
-  .lines { max-width:880px; margin:22px auto 0; display:grid; grid-template-columns:1fr; gap:12px; }
-  .line { background:rgba(255,255,255,.04); border:2px solid rgba(255,255,255,.08); border-radius:16px; padding:14px 16px; cursor:pointer; transition:all .2s; }
-  .line:hover, .line:active { border-color:#ffd54a88; }
-  .line.playing { border-color:#ffd54a; background:rgba(255,213,74,.08); box-shadow:0 0 16px rgba(255,213,74,.28); }
-  .line .num { font-size:var(--fs-min); color:#9b8cc0; letter-spacing:2px; margin-bottom:8px; }
-  .line .syl { font-size:calc(var(--fs) * 0.8); display:flex; flex-wrap:wrap; gap:10px; line-height:1.5; }
-  .line .ch { display:inline-flex; flex-direction:column; align-items:center; }
-  .line .ch b { font-size:calc(var(--fs) * 0.8); font-weight:700; }
-  .line .ch i { font-style:normal; font-size:calc(var(--fs-min) * 0.8); color:#8a7ab5; }
-  .line .ch.lit b { color:#ffd54a; }
-  .line .ch.lit i { color:#ffd54a; }
-  .line .note { font-size:calc(var(--fs) * 0.6); color:#8a7ab5; margin-top:8px; line-height:1.5; }
-  .line.sololoop { border-color:#7ee787; box-shadow:0 0 16px rgba(126,231,135,.4); background:rgba(126,231,135,.07); }
-  .line.sololoop .num::after { content:" 🔂 重複中"; color:#7ee787; font-weight:700; }
-  .done { text-align:center; font-size:calc(var(--fs) * 0.85); color:#ffd54a; margin-top:16px; letter-spacing:2px; display:none; line-height:1.6; }
-  /* ── 進階設定（A-B/對齊/速度微調，收埋唔阻長者）── */
-  details.adv { max-width:880px; margin:16px auto 0; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:10px 14px; }
-  details.adv summary { font-size:var(--fs-min); color:#8a7ab5; cursor:pointer; padding:6px 0; }
-  .advrow { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:8px 0; }
-  .advrow label { font-size:var(--fs-min); color:#b9a8e8; }
-  select { background:#2a1450; color:#e8e0f5; border:2px solid #6a4fb0; border-radius:10px; padding:10px 12px; font-size:var(--fs-min); min-height:46px; }
-  .minibtn { background:rgba(124,92,255,.18); color:#d5c9ff; border:2px solid rgba(124,92,255,.5); border-radius:12px; padding:8px 16px; font-size:var(--fs-min); font-weight:700; cursor:pointer; min-height:46px; }
+  .cgoal { font-size:calc(var(--ui) * 1.1); color:#c9b8f0; }
+  /* 完成訊息 */
+  .done { max-width:880px; margin:10px auto 0; text-align:center; font-size:24px; color:#ffd54a; display:none; letter-spacing:2px; line-height:1.6; padding:8px; }
+  /* 經文目錄（資料源，唔顯示） */
+  .lines { display:none !important; }
+  .line { border:0; }
+  /* 進階其他（收埋唔阻長者） */
+  details.adv { max-width:880px; margin:14px auto 0; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:8px 14px; }
+  details.adv summary { font-size:15px; color:#8a7ab5; cursor:pointer; padding:6px 0; letter-spacing:1px; }
+  .advrow { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:7px 0; }
+  .advrow label { font-size:15px; color:#b9a8e8; }
+  select { background:#2a1450; color:#e8e0f5; border:2px solid #6a4fb0; border-radius:10px; padding:9px 12px; font-size:15px; min-height:44px; }
+  .minibtn { background:rgba(124,92,255,.18); color:#d5c9ff; border:2px solid rgba(124,92,255,.5); border-radius:12px; padding:8px 15px; font-size:15px; font-weight:700; cursor:pointer; min-height:44px; }
   .minibtn:active { transform:scale(.94); }
-  #abShow { font-size:var(--fs-min); color:#9b8cc0; }
-  .backlink { text-align:center; margin-top:26px; }
-  .backlink a { color:#8a7ab5; font-size:var(--fs-min); text-decoration:none; }
-  @media (max-width:640px) { .topnav .t-title { font-size:calc(var(--fs) * 0.65); } .navbtn { min-width:70px; } }
+  .minibtn.loopon { box-shadow:0 0 0 2px #fff inset, 0 0 10px rgba(255,213,74,.5); }
+  #abShow { font-size:15px; color:#9b8cc0; }
+  @media (max-width:640px) { .topnav .t-title { font-size:17px; } .navbtn { min-width:62px; } .stage { min-height:48vh; } }
 </style>
 </head>
 <body>
@@ -87,35 +71,29 @@
 <div class="topnav">
   <a class="navbtn" id="backBtn" href="../home.html" title="返回設置頁">← 返回</a>
   <div class="t-title">楞嚴咒心</div>
-  <span class="ver" id="verTag">v4.10.0</span>
+  <span class="ver" id="verTag">v4.11.0</span>
   <a class="navbtn exit" href="../exit.html" title="完全退出">✕ 退出</a>
 </div>
-<h1>楞嚴咒心</h1>
-<div class="sub">Shurangama Mantra ｜ 果濱居士逐句練習版 ｜ 快誦一遍 ｜ 慢速跟唸最舒服</div>
 
 <audio id="au" src="audio_full.wav" preload="auto" style="display:none"></audio>
 
-<div class="player">
-  <div class="ctlrow">
-    <button class="bigbtn green" id="playBtn">▶ 播放</button>
-    <button class="bigbtn alt" id="restartBtn" title="跳返 0 秒，由第一句重新播放">⟲ 由頭</button>
-    <button class="bigbtn alt" id="loopBtn" title="整段自動重複播放">🔁 整段</button>
-    <button class="bigbtn alt" id="lineLoopBtn" title="只重複唸當前一句">🔂 單句</button>
-  </div>
-  <div class="ctlrow">
-    <span class="counter" title="唸誦遍數：完整唸完一遍 -1">
-      <span class="cgoal">遍數</span>
-      <span class="big" id="remain">∞</span>
-      <span class="cgoal" id="goalTag">目標 ∞</span>
-    </span>
-    <span class="timer" id="timer">0.0 / 10.0 s</span>
-  </div>
-  <div class="progress"><i id="bar"></i></div>
+<!-- 讀經大字舞台：當前句 ＋ 中文註解 ＋ 下一句預告（其餘唔顯示，留位俾讀經） -->
+<div class="stage">
+  <div id="curLine"></div>
+  <div id="noteLine"></div>
+  <div id="nextLine"></div>
 </div>
 
-<div class="stage"><div id="curLine"></div></div>
+<div class="ctl">
+  <button class="bigbtn green playbig" id="playBtn">▶ 播放</button>
+  <div class="cntrow">
+    <span class="big" id="remain">∞</span>
+    <span class="cgoal" id="goalTag">目標 ∞</span>
+  </div>
+</div>
 <div class="done" id="done">🎉 完成！功德迴向一切眾生 🙏</div>
 
+<!-- 經文目錄（純資料源，CSS 隱藏：每句內容/時間軸由此攞） -->
 <div class="lines">
 <section class="line" id="L0" data-s="0.06" data-e="2.56">
   <div class="num">01</div>
@@ -154,8 +132,14 @@
 </section>
 </div>
 
+<!-- 其餘功能收埋（唔阻長者）：速度／由頭／重複／A-B／目標遍數 -->
 <details class="adv" id="advBox">
-  <summary>⋯ 進階設定（速度微調／A-B 段落／對齊／目標遍數）</summary>
+  <summary>⋯ 更多（速度／由頭／重複／目標遍數）</summary>
+  <div class="advrow">
+    <button class="minibtn" id="restartBtn" title="跳返 0 秒，由第一句重新播放">⟲ 由頭</button>
+    <button class="minibtn" id="loopBtn" title="整段自動重複播放">🔁 整段</button>
+    <button class="minibtn" id="lineLoopBtn" title="只重複唸當前一句">🔂 單句</button>
+  </div>
   <div class="advrow">
     <label>速度</label>
     <select id="rate">
@@ -193,8 +177,6 @@
   </div>
 </details>
 
-<div class="backlink"><a href="../home.html">🏠 返回選經主頁</a></div>
-
 <script>
 // ══ 長者版：讀取設置（P2 設置頁寫入 localStorage）＋按鈕聲效振動 ══
 const MK = {
@@ -210,9 +192,9 @@ function tapFx() {
     _actx = _actx || new (window.AudioContext || window.webkitAudioContext)();
     if (_actx.state === 'suspended') _actx.resume();
     const o = _actx.createOscillator(), g = _actx.createGain();
-    o.type = 'sine'; o.frequency.value = 620;
-    g.gain.setValueAtTime(0.12, _actx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, _actx.currentTime + 0.07);
+    o.type = 'sine'; o.frequency.value = 760;
+    g.gain.setValueAtTime(0.25, _actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, _actx.currentTime + 0.09);
     o.connect(g); g.connect(_actx.destination);
     o.start(); o.stop(_actx.currentTime + 0.08);
   } catch(e) {}
@@ -261,12 +243,24 @@ function renderCur(i) {
     syl.appendChild(ng);
   });
   cur.appendChild(syl);
-  const note = document.createElement('div'); note.className = 'note';
   // 中文註解：explanations.json perLine 優先（冇就用 data 內嵌 explain）
-  let txt = src.querySelector('.note').textContent;
-  if (window.__EX && window.__EX.perLine && window.__EX.perLine[i]) txt = window.__EX.perLine[i];
-  note.textContent = txt;
-  cur.appendChild(note);
+  const note = document.getElementById('noteLine');
+  if (note) {
+    let txt = src.querySelector('.note') ? src.querySelector('.note').textContent : '';
+    if (window.__EX && window.__EX.perLine && window.__EX.perLine[i]) txt = window.__EX.perLine[i];
+    note.textContent = txt;
+  }
+  // 下一句預告（只有漢字，唔 highlight；冇下句＝迴向）
+  const nx = document.getElementById('nextLine');
+  if (nx) {
+    if (i + 1 < lines.length) {
+      const hs = [];
+      lines[i + 1].sec.querySelectorAll('.ch b').forEach(bb => hs.push(bb.textContent));
+      nx.innerHTML = '<span class="nxlabel">下一句</span>' + hs.join('');
+    } else {
+      nx.innerHTML = '<span class="nxlabel">下一句</span>🙏 唸完迴向一切眾生';
+    }
+  }
   chars = [];
   cur.querySelectorAll('.ch').forEach(el => chars.push({el, s:parseFloat(el.dataset.s), e:parseFloat(el.dataset.e)}));
 }
@@ -309,8 +303,8 @@ document.getElementById('goal').onchange = e => {
 function tick() {
   const t = AUDIO.currentTime * RATES[curRate].s;   // 原時間軸
   const tDisp = t + align;                          // 對齊：highlight 顯示用（正數＝字遲啲亮）
-  document.getElementById('bar').style.width = (Math.min(t, DUR) / DUR * 100) + '%';
-  document.getElementById('timer').textContent = t.toFixed(1) + ' / ' + DUR.toFixed(1) + ' s';
+  const _bar = document.getElementById('bar'); if (_bar) _bar.style.width = (Math.min(t, DUR) / DUR * 100) + '%';
+  const _tm = document.getElementById('timer'); if (_tm) _tm.textContent = t.toFixed(1) + ' / ' + DUR.toFixed(1) + ' s';
   // 🔂 單句：唸到句尾即刻停（停喺句頭，再㩒 ▶ 由頭再唸）
   if (singleLine >= 0 && !seeking) {
   	const L = lines[singleLine];
