@@ -9,12 +9,12 @@
   body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:0 16px 40px; }
   /* 頂欄：返回 / title / 版本 / 完全退出 */
   .topnav { position:sticky; top:0; z-index:50; display:flex; align-items:center; gap:10px; background:rgba(21,10,40,.92); backdrop-filter:blur(6px); padding:12px 4px; border-bottom:1px solid rgba(255,213,74,.18); }
-  .navbtn { display:inline-flex; align-items:center; justify-content:center; min-height:60px; padding:0 20px; border-radius:16px; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.08); color:#ffd54a; font-size:21px; font-weight:700; text-decoration:none; cursor:pointer; flex-shrink:0; }
+  .navbtn { display:inline-flex; align-items:center; justify-content:center; min-height:60px; padding:0 20px; flex-shrink:0; border-radius:16px; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.08); color:#ffd54a; font-size:21px; font-weight:700; text-decoration:none; cursor:pointer; flex-shrink:0; }
   .navbtn:active { transform:scale(.96); background:rgba(255,213,74,.2); }
   .navbtn.exit { border-color:rgba(255,120,120,.5); background:rgba(255,80,80,.12); color:#ffb0b0; }
   .t-title { flex:1; text-align:center; font-size:26px; font-weight:700; color:#ffd54a; letter-spacing:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .ver { font-size:13px; color:#9b8cc0; background:rgba(21,10,40,.8); border:1px solid rgba(107,79,176,.45); padding:3px 10px; border-radius:12px; flex-shrink:0; }
-  h1 { text-align:center; font-size:36px; letter-spacing:4px; color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.35); margin:26px 0 4px; }
+  h1 { text-align:center; font-size:36px; letter-spacing:4px; color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.35); margin:30px 0 26px; }
   .sub { text-align:center; font-size:20px; color:#b9a8e8; letter-spacing:1px; margin-bottom:26px; }
   .wrap { max-width:640px; margin:0 auto; }
   /* 選項組 */
@@ -66,12 +66,10 @@
 <body>
 <div class="topnav">
   <a class="navbtn" href="home.html" title="返回上一頁">← 返回</a>
-  <div class="t-title" id="pageTitle">讀經設置</div>
+  <div style="flex:1"></div>
   <a class="navbtn exit" href="exit.html" title="完全退出">✕ 退出</a>
-  <span class="ver">v4.15.0</span>
 </div>
-<h1>📖 讀呢段經嘅設置</h1>
-<div class="sub" id="cardSub">揀好之後㩒「開始讀經」；唔啱就 ← 退出或 ✕ 退出再選過經</div>
+<h1 id="cardTitle">⚙ 設置</h1>
 
 <div class="wrap">
   <!-- 音速 -->
@@ -160,8 +158,8 @@ const cardSlug = q.get('card') || '';
 const cardTitle = q.get('t') || '';
 if (cardTitle) {
   document.title = '⚙ ' + cardTitle;
-  document.getElementById('pageTitle').textContent = cardTitle;
-  document.getElementById('cardSub').textContent = '揀好速度同顯示，㩒「開始讀經」；唔啱 ← 退出再選過經';
+  const h1 = document.getElementById('cardTitle');
+  if (h1) h1.textContent = cardTitle;
 }
 
 // ── 選項組通用 ──
@@ -359,8 +357,7 @@ async function loadMgrList() {
     el.querySelectorAll('.delbtn').forEach(b => b.addEventListener('click', () => delCard(b)));
     // 有 card 參數 → 用 playlist 短名做經文 title（取代超長 URL 參數）
     if (cardSlug && pl[cardSlug] && pl[cardSlug].name) {
-      document.querySelector('.t-title').textContent = pl[cardSlug].name;
-      const h1 = document.querySelector('h1');
+      const h1 = document.getElementById('cardTitle');
       if (h1) h1.textContent = pl[cardSlug].name;
       document.title = '⚙ ' + pl[cardSlug].name + ' · 讀經設置';
     }
