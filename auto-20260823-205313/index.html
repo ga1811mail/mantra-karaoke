@@ -4,97 +4,285 @@
 <meta charset="UTF-8">
 <title>心經經文 （梵文） 果濱居士 · 卡拉OK 跟唸</title>
 <style>
+  :root{ --fs:22px; --fs-min:14px; --btn-h:64px; --btn-fs:22px; --pad:18px; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:28px 20px 40px; }
-  h1 { text-align:center; font-size:22px; letter-spacing:4px; color:#ffd54a; margin-bottom:4px; text-shadow:0 0 18px rgba(255,213,74,.35); }
-  .sub { text-align:center; font-size:12px; color:#9b8cc0; margin-bottom:20px; letter-spacing:2px; }
-  .linkbox { max-width:860px; margin:0 auto 20px; background:rgba(255,255,255,.04); border:1px dashed rgba(255,213,74,.35); border-radius:14px; padding:12px 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .linkbox label { font-size:13px; color:#c9b8f0; white-space:nowrap; }
-  .linkbox input { flex:1; min-width:200px; background:#241545; color:#e8e0f5; border:1px solid #6a4fb0; border-radius:8px; padding:8px 12px; font-size:14px; outline:none; }
-  .linkbox input:focus { border-color:#ffd54a; }
-  .linkbox .msg { font-size:12px; color:#7d6ea8; width:100%; }
-  .linkbox .msg.ok { color:#7ee787; }
-  .ppanel { margin-top:12px; border-top:1px solid rgba(255,213,74,.2); padding-top:12px; }
-  .ppanel .phead { font-size:13px; color:#ffd54a; margin-bottom:8px; letter-spacing:1px; }
-  .ppanel .prow { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
-  .ppanel .prow span { font-size:12px; color:#c9b8f0; width:110px; flex-shrink:0; }
-  .ppanel .pbar { flex:1; height:9px; background:#3a2a66; border-radius:5px; overflow:hidden; }
-  .ppanel .pbar i { display:block; height:100%; width:0%; background:linear-gradient(90deg,#6a4fb0,#b39ddb); border-radius:5px; transition:width .6s; }
-  .ppanel .prow.done span { color:#7ee787; }
-  .ppanel .prow.done .pbar i { width:100%; background:linear-gradient(90deg,#2ea043,#7ee787); }
-  .ppanel .prow.active .pbar i { width:55%; background:linear-gradient(90deg,#ffd54a,#ff9d2e); animation:pulse 1.2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:.5;} 50%{opacity:1;} }
-  .ppanel .pnote { font-size:12px; color:#9b8cc0; margin-top:6px; }
-  .ppanel .pnote a { color:#7ee787; }
-  .player { position:sticky; top:0; z-index:50; background:rgba(21,10,40,.92); backdrop-filter:blur(8px); border-bottom:1px solid rgba(255,213,74,.15); padding:12px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  .btn { background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; border:none; border-radius:20px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 3px 12px rgba(255,157,46,.35); }
-  .btn:hover { filter:brightness(1.1); }
-  .btn.alt { background:linear-gradient(135deg,#6a4fb0,#4a3590); color:#e8e0f5; box-shadow:none; padding:6px 12px; font-size:13px; }
-  .btn.small { padding:5px 10px; font-size:12px; }
-  .btn.loopon { background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; box-shadow:0 0 12px rgba(255,213,74,.6); }
-  select { background:#2a1450; color:#e8e0f5; border:1px solid #6a4fb0; border-radius:8px; padding:5px 8px; font-size:13px; }
-  .ctl { display:flex; align-items:center; gap:8px; font-size:13px; color:#c9b8f0; }
-  .progress { flex:1; min-width:120px; height:6px; background:#3a2a66; border-radius:3px; overflow:hidden; }
+  html { -webkit-text-size-adjust:100%; }
+  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:16px 14px 40px; }
+  body.f1 { --fs:26px; --fs-min:15px; --btn-h:72px; --btn-fs:24px; --pad:22px; }
+  body.f2 { --fs:32px; --fs-min:17px; --btn-h:84px; --btn-fs:28px; --pad:26px; }
+  h1 { text-align:center; font-size:calc(var(--fs) * 0.9); letter-spacing:3px; color:#ffd54a; margin-bottom:3px; text-shadow:0 0 18px rgba(255,213,74,.35); }
+  .sub { text-align:center; font-size:var(--fs-min); color:#9b8cc0; margin-bottom:14px; letter-spacing:1px; }
+  /* ── 頂欄：←返回 / title / 版本 / ✕完全退出（所有頁面共用）── */
+  .topnav { max-width:880px; margin:0 auto 12px; display:flex; align-items:center; gap:8px; }
+  .topnav .t-title { flex:1; text-align:center; font-size:calc(var(--fs) * 0.75); font-weight:700; color:#e8e0f5; letter-spacing:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .navbtn { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:56px; min-width:96px; padding:6px 14px; border-radius:16px; font-size:var(--fs-min); font-weight:700; text-decoration:none; cursor:pointer; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.12); color:#ffd54a; transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
+  .navbtn:active { transform:scale(.94); }
+  .navbtn.exit { border-color:rgba(220,90,90,.5); background:rgba(220,90,90,.12); color:#ff9d9d; }
+  .navbtn:first-child { margin-right:0; }
+  .ver { font-size:11px; color:#8b7fb0; background:rgba(21,10,40,.6); border:1px solid rgba(107,79,176,.35); padding:1px 7px; border-radius:8px; white-space:nowrap; }
+  .bigbtn { display:inline-flex; align-items:center; justify-content:center; min-height:var(--btn-h); padding:8px 22px; border:none; border-radius:18px; font-size:var(--btn-fs); font-weight:800; cursor:pointer; background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; box-shadow:0 4px 14px rgba(255,157,46,.35); transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
+  .bigbtn:active { transform:scale(.95); filter:brightness(1.12); }
+  .bigbtn.alt { background:linear-gradient(135deg,#6a4fb0,#4a3590); color:#e8e0f5; box-shadow:none; }
+  .bigbtn.on { box-shadow:0 0 0 3px #fff inset, 0 0 18px rgba(255,213,74,.5); }
+  .bigbtn.loopon { box-shadow:0 0 0 3px #fff inset, 0 0 18px rgba(255,213,74,.5); background:linear-gradient(135deg,#ffb300,#ff8f00); color:#3a2500; }
+  .minibtn.loopon { box-shadow:0 0 0 2px #fff inset, 0 0 10px rgba(255,213,74,.5); }
+  .bigbtn.green { background:linear-gradient(135deg,#3ecf6e,#1f9d4f); color:#062b12; box-shadow:0 4px 14px rgba(62,207,110,.3); }
+  .ctlrow { max-width:880px; margin:0 auto 12px; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px; }
+  .timer { font-size:var(--fs-min); color:#b9a8e8; font-variant-numeric:tabular-nums; }
+  /* ── 播放器 ── */
+  .player { position:sticky; top:0; z-index:50; background:rgba(21,10,40,.94); backdrop-filter:blur(8px); border-bottom:1px solid rgba(255,213,74,.18); padding:10px 8px; }
+  .progress { height:10px; background:#3a2a66; border-radius:5px; overflow:hidden; margin-bottom:10px; }
   .progress i { display:block; height:100%; width:0%; background:linear-gradient(90deg,#ffd54a,#ff9d2e); }
-  .timer { font-size:13px; color:#9b8cc0; font-variant-numeric:tabular-nums; white-space:nowrap; }
-  .counter { display:flex; align-items:center; gap:8px; background:rgba(255,213,74,.08); border:1px solid rgba(255,213,74,.3); border-radius:12px; padding:6px 12px; }
-  .counter .big { font-size:22px; font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:34px; text-align:center; transition:color .2s; }
-  .counter .big.counting { color:#7ee787; text-shadow:0 0 10px rgba(126,231,135,.5); }
+  .counter { display:inline-flex; align-items:center; justify-content:center; gap:10px; background:rgba(255,213,74,.1); border:2px solid rgba(255,213,74,.4); border-radius:18px; padding:8px 18px; min-height:var(--btn-h); }
+  .counter .big { font-size:calc(var(--fs) * 1.15); font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:44px; text-align:center; }
+  .counter .big.counting { color:#7ee787; }
   .counter .big.flash { animation:flash .5s; }
   @keyframes flash { 0%{transform:scale(1.6); color:#fff;} 100%{transform:scale(1);} }
-  .stage { max-width:860px; margin:26px auto 0; background:rgba(255,255,255,.03); border:1px solid rgba(255,213,74,.12); border-radius:18px; padding:34px 28px; min-height:280px; display:flex; align-items:center; justify-content:center; }
+  .cgoal { font-size:var(--fs-min); color:#c9b8f0; }
+  /* ── 大字舞台 ── */
+  .stage { max-width:880px; margin:14px auto 0; background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.14); border-radius:20px; padding:26px 16px; min-height:240px; display:flex; align-items:center; justify-content:center; }
   #curLine { text-align:center; width:100%; }
-  #curLine .syl { font-size:40px; line-height:1.5; display:flex; flex-wrap:wrap; justify-content:center; gap:14px; }
-  #curLine .grp { display:inline-flex; flex-wrap:wrap; gap:2px; }
-  #curLine .ch { display:inline-flex; flex-direction:column; align-items:center; margin:0 1px; padding:2px 6px; border-radius:8px; transition:all .12s; }
-  #curLine .ch b { font-size:40px; color:#e8e0f5; font-weight:700; line-height:1.25; }
-  #curLine .ch i { font-style:normal; font-size:14px; color:#9b8cc0; margin-top:2px; letter-spacing:.5px; }
-  #curLine .ch.lit { background:linear-gradient(180deg,rgba(255,213,74,.28),rgba(255,157,46,.12)); box-shadow:0 0 22px rgba(255,213,74,.5); transform:scale(1.08); }
-  #curLine .ch.lit b { color:#ffd54a; text-shadow:0 0 16px rgba(255,213,74,.9); }
+  #curLine .syl { font-size:var(--fs); line-height:1.55; display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+  #curLine .grp { display:inline-flex; flex-wrap:wrap; gap:3px; }
+  #curLine .ch { display:inline-flex; flex-direction:column; align-items:center; margin:0 1px; padding:3px 7px; border-radius:10px; transition:all .12s; }
+  #curLine .ch b { font-size:calc(var(--fs) * 1.1); color:#e8e0f5; font-weight:800; line-height:1.3; }
+  #curLine .ch i { font-style:normal; font-size:calc(var(--fs-min) * 0.95); color:#9b8cc0; margin-top:3px; letter-spacing:.5px; }
+  body.nopy #curLine .ch i, body.nopy .lines .ch i { display:none; }
+  #curLine .ch.lit { background:linear-gradient(180deg,rgba(255,213,74,.3),rgba(255,157,46,.14)); box-shadow:0 0 24px rgba(255,213,74,.55); transform:scale(1.08); }
+  #curLine .ch.lit b { color:#ffd54a; text-shadow:0 0 16px rgba(255,213,74,.95); }
   #curLine .ch.lit i { color:#ffd54a; }
-  #curLine .note { margin-top:22px; font-size:17px; color:#c9b8f0; letter-spacing:1px; min-height:26px; }
-  .lines { max-width:860px; margin:26px auto 0; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .line { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:12px 14px; cursor:pointer; transition:all .2s; }
-  .line:hover { border-color:#ffd54a88; }
-  .line.playing { border-color:#ffd54a; background:rgba(255,213,74,.07); box-shadow:0 0 14px rgba(255,213,74,.25); }
-  .line .num { font-size:11px; color:#9b8cc0; letter-spacing:2px; margin-bottom:6px; }
-  .line .syl { font-size:17px; display:flex; flex-wrap:wrap; gap:8px; }
+  #curLine .note { margin-top:22px; font-size:calc(var(--fs) * 0.72); color:#c9b8f0; letter-spacing:1px; min-height:30px; line-height:1.6; }
+  body.nonote #curLine .note, body.nonote .lines .note { display:none; }
+  .lines { max-width:880px; margin:22px auto 0; display:grid; grid-template-columns:1fr; gap:12px; }
+  .line { background:rgba(255,255,255,.04); border:2px solid rgba(255,255,255,.08); border-radius:16px; padding:14px 16px; cursor:pointer; transition:all .2s; }
+  .line:hover, .line:active { border-color:#ffd54a88; }
+  .line.playing { border-color:#ffd54a; background:rgba(255,213,74,.08); box-shadow:0 0 16px rgba(255,213,74,.28); }
+  .line .num { font-size:var(--fs-min); color:#9b8cc0; letter-spacing:2px; margin-bottom:8px; }
+  .line .syl { font-size:calc(var(--fs) * 0.8); display:flex; flex-wrap:wrap; gap:10px; line-height:1.5; }
   .line .ch { display:inline-flex; flex-direction:column; align-items:center; }
-  .line .ch b { font-size:17px; font-weight:600; }
-  .line .ch i { font-style:normal; font-size:10px; color:#8a7ab5; }
+  .line .ch b { font-size:calc(var(--fs) * 0.8); font-weight:700; }
+  .line .ch i { font-style:normal; font-size:calc(var(--fs-min) * 0.8); color:#8a7ab5; }
   .line .ch.lit b { color:#ffd54a; }
   .line .ch.lit i { color:#ffd54a; }
-  .line .note { font-size:11px; color:#7d6ea8; margin-top:6px; }
-  .line.sololoop { border-color:#7ee787; box-shadow:0 0 14px rgba(126,231,135,.35); background:rgba(126,231,135,.06); }
+  .line .note { font-size:calc(var(--fs) * 0.6); color:#8a7ab5; margin-top:8px; line-height:1.5; }
+  .line.sololoop { border-color:#7ee787; box-shadow:0 0 16px rgba(126,231,135,.4); background:rgba(126,231,135,.07); }
   .line.sololoop .num::after { content:" 🔂 重複中"; color:#7ee787; font-weight:700; }
-  .done { text-align:center; font-size:20px; color:#ffd54a; margin-top:14px; letter-spacing:2px; display:none; }
-  .topbar { max-width:860px; margin:0 auto 14px; display:flex; justify-content:space-between; align-items:center; }
-  .ver { font-size:12px; color:#8b949e; }
-  .homebtn { background:rgba(255,213,74,.12); border:1px solid rgba(255,213,74,.35); color:#ffd54a; text-decoration:none; border-radius:20px; padding:6px 16px; font-size:13px; }
-  .homebtn:hover { background:rgba(255,213,74,.22); }
-  @media (max-width:760px) { .lines { grid-template-columns:1fr; } #curLine .syl { font-size:28px; } #curLine .ch b { font-size:28px; } .counter .big { font-size:18px; } }
+  .done { text-align:center; font-size:calc(var(--fs) * 0.85); color:#ffd54a; margin-top:16px; letter-spacing:2px; display:none; line-height:1.6; }
+  /* ── 進階設定（A-B/對齊/速度微調，收埋唔阻長者）── */
+  details.adv { max-width:880px; margin:16px auto 0; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:10px 14px; }
+  details.adv summary { font-size:var(--fs-min); color:#8a7ab5; cursor:pointer; padding:6px 0; }
+  .advrow { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:8px 0; }
+  .advrow label { font-size:var(--fs-min); color:#b9a8e8; }
+  select { background:#2a1450; color:#e8e0f5; border:2px solid #6a4fb0; border-radius:10px; padding:10px 12px; font-size:var(--fs-min); min-height:46px; }
+  .minibtn { background:rgba(124,92,255,.18); color:#d5c9ff; border:2px solid rgba(124,92,255,.5); border-radius:12px; padding:8px 16px; font-size:var(--fs-min); font-weight:700; cursor:pointer; min-height:46px; }
+  .minibtn:active { transform:scale(.94); }
+  #abShow { font-size:var(--fs-min); color:#9b8cc0; }
+  .backlink { text-align:center; margin-top:26px; }
+  .backlink a { color:#8a7ab5; font-size:var(--fs-min); text-decoration:none; }
+  @media (max-width:640px) { .topnav .t-title { font-size:calc(var(--fs) * 0.65); } .navbtn { min-width:70px; } }
 </style>
 </head>
 <body>
-<div class="topbar"><span class="ver">v4.9.4</span><a class="homebtn" href="../home.html">🏠 主頁</a></div>
+<!-- 頂欄（長者版三頁導航）：←返回設置 / 經文 title / ✕完全退出 + 版本號 -->
+<div class="topnav">
+  <a class="navbtn" id="backBtn" href="../home.html" title="返回設置頁">← 返回</a>
+  <div class="t-title">心經經文 （梵文） 果濱居士</div>
+  <span class="ver" id="verTag">v4.10.0</span>
+  <a class="navbtn exit" href="../exit.html" title="完全退出">✕ 退出</a>
+</div>
 <h1>心經經文 （梵文） 果濱居士</h1>
 <div class="sub">自動跟唸版（拉丁轉寫；中文音譯/解釋可貼 link 畀 Hermes 執靚）</div>
-
-<div class="linkbox">
-  <label>🔗 輸入任何經文影片連結：</label>
-  <input id="linkInput" type="url" placeholder="https://weixin.qq.com/sph/... 或 YouTube 連結" spellcheck="false">
-  <button class="btn alt" id="linkGo">生成跟唸版</button>
-  <div class="msg" id="linkMsg">貼入經文/佛咒影片連結 → 㩒「生成跟唸版」→ 自動工廠即刻開工（下載→轉錄→拼音→生成→上架，約 2–5 分鐘），進度 bar 實時跳。</div>
-</div>
 
 <audio id="au" src="audio_full.wav" preload="auto" style="display:none"></audio>
 
 <div class="player">
-  <button class="btn" id="playBtn">▶ 播放</button>
-  <button class="btn" id="restartBtn" style="background:linear-gradient(135deg,#6a4fb0,#4a3590); color:#e8e0f5; box-shadow:none;" title="跳返 0 秒，由第一句重新播放">⟲ 由頭</button>
-  <button class="btn alt" id="loopBtn" title="整段自動重複播放">🔁 整段</button>
-  <button class="btn alt" id="lineLoopBtn" title="只重複唸當前一句（㩒任何一句即轉去唸嗰句）">🔂 單句</button>
-  <span class="ctl">速度
+  <div class="ctlrow">
+    <button class="bigbtn green" id="playBtn">▶ 播放</button>
+    <button class="bigbtn alt" id="restartBtn" title="跳返 0 秒，由第一句重新播放">⟲ 由頭</button>
+    <button class="bigbtn alt" id="loopBtn" title="整段自動重複播放">🔁 整段</button>
+    <button class="bigbtn alt" id="lineLoopBtn" title="只重複唸當前一句">🔂 單句</button>
+  </div>
+  <div class="ctlrow">
+    <span class="counter" title="唸誦遍數：完整唸完一遍 -1">
+      <span class="cgoal">遍數</span>
+      <span class="big" id="remain">∞</span>
+      <span class="cgoal" id="goalTag">目標 ∞</span>
+    </span>
+    <span class="timer" id="timer">0.0 / 189.54 s</span>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</div>
+
+<div class="stage"><div id="curLine"></div></div>
+<div class="done" id="done">🎉 完成！功德迴向一切眾生 🙏</div>
+
+<div class="lines">
+<section class="line" id="L0" data-s="0.0" data-e="5.94">
+  <div class="num">01</div>
+  <div class="syl"></div>
+  <div class="note">經題：聖般若波羅蜜多心經——般若（智慧）到彼岸的精要</div>
+</section>
+<section class="line" id="L1" data-s="5.64" data-e="12.1">
+  <div class="num">02</div>
+  <div class="syl"></div>
+  <div class="note">禮敬一切智者（佛陀）；觀自在菩薩（觀世音菩薩）</div>
+</section>
+<section class="line" id="L2" data-s="11.8" data-e="16.38">
+  <div class="num">03</div>
+  <div class="syl"></div>
+  <div class="note">於甚深般若波羅蜜多（深智慧）之中</div>
+</section>
+<section class="line" id="L3" data-s="16.08" data-e="21.32">
+  <div class="num">04</div>
+  <div class="syl"></div>
+  <div class="note">修行觀照（行深般若波羅蜜多時）</div>
+</section>
+<section class="line" id="L4" data-s="21.02" data-e="28.28">
+  <div class="num">05</div>
+  <div class="syl"></div>
+  <div class="note">照見五蘊（色受想行識）皆自性空</div>
+</section>
+<section class="line" id="L5" data-s="27.98" data-e="35.42">
+  <div class="num">06</div>
+  <div class="syl"></div>
+  <div class="note">舍利子！色即是空，空即是色</div>
+</section>
+<section class="line" id="L6" data-s="35.12" data-e="42.02">
+  <div class="num">07</div>
+  <div class="syl"></div>
+  <div class="note">色不異空，空不異色</div>
+</section>
+<section class="line" id="L7" data-s="41.72" data-e="48.6">
+  <div class="num">08</div>
+  <div class="syl"></div>
+  <div class="note">色即是空，空即是色（重述肯定）</div>
+</section>
+<section class="line" id="L8" data-s="48.3" data-e="55.4">
+  <div class="num">09</div>
+  <div class="syl"></div>
+  <div class="note">受、想、行、識，亦復如是（同樣是空）</div>
+</section>
+<section class="line" id="L9" data-s="56.06" data-e="64.82">
+  <div class="num">10</div>
+  <div class="syl"></div>
+  <div class="note">舍利子！一切法空相：不生不滅</div>
+</section>
+<section class="line" id="L10" data-s="64.52" data-e="70.64">
+  <div class="num">11</div>
+  <div class="syl"></div>
+  <div class="note">不垢不淨，不增不減；所以（因此）</div>
+</section>
+<section class="line" id="L11" data-s="70.34" data-e="76.52">
+  <div class="num">12</div>
+  <div class="syl"></div>
+  <div class="note">舍利子！空中無色，亦無受</div>
+</section>
+<section class="line" id="L12" data-s="76.22" data-e="82.6">
+  <div class="num">13</div>
+  <div class="syl"></div>
+  <div class="note">無想、無行、無識；無眼（根）</div>
+</section>
+<section class="line" id="L13" data-s="82.3" data-e="87.74">
+  <div class="num">14</div>
+  <div class="syl"></div>
+  <div class="note">無耳、鼻、舌、身、意（六根皆空）</div>
+</section>
+<section class="line" id="L14" data-s="87.44" data-e="93.1">
+  <div class="num">15</div>
+  <div class="syl"></div>
+  <div class="note">無色、聲、香、味、觸、法（六塵皆空）</div>
+</section>
+<section class="line" id="L15" data-s="92.8" data-e="99.58">
+  <div class="num">16</div>
+  <div class="syl"></div>
+  <div class="note">無眼界，乃至無意識界（十八界皆空）</div>
+</section>
+<section class="line" id="L16" data-s="99.28" data-e="106.38">
+  <div class="num">17</div>
+  <div class="syl"></div>
+  <div class="note">無無明，亦無無明盡；乃至無老死</div>
+</section>
+<section class="line" id="L17" data-s="106.08" data-e="113.72">
+  <div class="num">18</div>
+  <div class="syl"></div>
+  <div class="note">無老死盡；無苦、集、滅（道）</div>
+</section>
+<section class="line" id="L18" data-s="113.42" data-e="118.46">
+  <div class="num">19</div>
+  <div class="syl"></div>
+  <div class="note">無道；無智亦無得；所以（因此）</div>
+</section>
+<section class="line" id="L19" data-s="118.16" data-e="124.72">
+  <div class="num">20</div>
+  <div class="syl"></div>
+  <div class="note">以無所得故，菩薩依般若波羅蜜多</div>
+</section>
+<section class="line" id="L20" data-s="124.42" data-e="132.28">
+  <div class="num">21</div>
+  <div class="syl"></div>
+  <div class="note">心無罣礙（無有障礙）</div>
+</section>
+<section class="line" id="L21" data-s="132.57999999999998" data-e="138.78">
+  <div class="num">22</div>
+  <div class="syl"></div>
+  <div class="note">無罣礙故，無有恐怖，遠離顛倒夢想</div>
+</section>
+<section class="line" id="L22" data-s="138.48" data-e="143.94">
+  <div class="num">23</div>
+  <div class="syl"></div>
+  <div class="note">究竟涅槃；三世諸佛皆安住此法</div>
+</section>
+<section class="line" id="L23" data-s="143.64" data-e="147.58">
+  <div class="num">24</div>
+  <div class="syl"></div>
+  <div class="note">一切諸佛，依般若波羅蜜多</div>
+</section>
+<section class="line" id="L24" data-s="147.28" data-e="152.02">
+  <div class="num">25</div>
+  <div class="syl"></div>
+  <div class="note">故得阿耨多羅三藐三菩提（無上正等正覺）</div>
+</section>
+<section class="line" id="L25" data-s="151.72" data-e="154.56">
+  <div class="num">26</div>
+  <div class="syl"></div>
+  <div class="note">皆已成正覺；所以（因此）</div>
+</section>
+<section class="line" id="L26" data-s="154.26" data-e="158.4">
+  <div class="num">27</div>
+  <div class="syl"></div>
+  <div class="note">應知般若波羅蜜多</div>
+</section>
+<section class="line" id="L27" data-s="158.7" data-e="166.38">
+  <div class="num">28</div>
+  <div class="syl"></div>
+  <div class="note">是大神咒，是大明咒，是無上咒，是無等等咒</div>
+</section>
+<section class="line" id="L28" data-s="166.08" data-e="172.04">
+  <div class="num">29</div>
+  <div class="syl"></div>
+  <div class="note">能除一切苦，真實不虛</div>
+</section>
+<section class="line" id="L29" data-s="171.74" data-e="176.4">
+  <div class="num">30</div>
+  <div class="syl"></div>
+  <div class="note">故說般若波羅蜜多咒</div>
+</section>
+<section class="line" id="L30" data-s="176.1" data-e="183.44">
+  <div class="num">31</div>
+  <div class="syl"></div>
+  <div class="note">即說咒曰：揭諦揭諦，波羅揭諦，波羅僧揭諦，菩提薩婆訶（去吧去吧，到彼岸去吧，願速證菩提）</div>
+</section>
+<section class="line" id="L31" data-s="183.14" data-e="189.84">
+  <div class="num">32</div>
+  <div class="syl"></div>
+  <div class="note">般若波羅蜜多心經（圓滿終）</div>
+</section>
+</div>
+
+<details class="adv" id="advBox">
+  <summary>⋯ 進階設定（速度微調／A-B 段落／對齊／目標遍數）</summary>
+  <div class="advrow">
+    <label>速度</label>
     <select id="rate">
       <option value="0.4">0.4×</option>
       <option value="0.5">0.5×</option>
@@ -104,8 +292,7 @@
       <option value="1.25">1.25×</option>
       <option value="1.5">1.5×</option>
     </select>
-  </span>
-  <span class="ctl" title="字同聲對唔齊時調（正數＝字遲啲亮）">對齊
+    <label>對齊</label>
     <select id="align">
       <option value="-1">-1s</option>
       <option value="-0.5">-0.5s</option>
@@ -114,194 +301,53 @@
       <option value="1">+1s</option>
       <option value="1.5">+1.5s</option>
     </select>
-  </span>
-  <span class="ctl" style="border-left:1px solid #4a3590; padding-left:12px;">
-    <button class="btn alt small" id="setA">ⓐ 設A</button>
-    <button class="btn alt small" id="setB">ⓑ 設B</button>
-    <button class="btn alt small" id="clrAB" title="清除 A-B">✕</button>
-    <span id="abShow" class="timer">A-B: –</span>
-  </span>
-  <span class="counter" title="設定目標遍數：按播放開始倒數，完整唸完一遍 -1">
-    遍數 <select id="goal">
+  </div>
+  <div class="advrow">
+    <button class="minibtn" id="setA">ⓐ 設A</button>
+    <button class="minibtn" id="setB">ⓑ 設B</button>
+    <button class="minibtn" id="clrAB">✕ 清除A-B</button>
+    <span id="abShow">A-B: –</span>
+    <label style="margin-left:14px;">目標遍數</label>
+    <select id="goal">
       <option value="3">3</option>
       <option value="7">7</option>
       <option value="21">21</option>
       <option value="108">108</option>
       <option value="0" selected>∞</option>
     </select>
-    <span class="big" id="remain">∞</span>
-  </span>
-  <div class="progress"><i id="bar"></i></div>
-  <span class="timer" id="timer">0.0 / 189.54 s</span>
-</div>
+  </div>
+</details>
 
-<div class="stage"><div id="curLine"></div></div>
-<div class="done" id="done">🎉 完成！功德迴向一切眾生 🙏</div>
-
-<div class="lines">
-<section class="line" id="L0" data-s="0.0" data-e="5.94">
-  <div class="num">01</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="0.300" data-e="1.080"><b>Ata</b><i></i></span><span class="ch" data-s="1.080" data-e="2.000"><b>Prajanya</b><i></i></span><span class="ch" data-s="2.000" data-e="3.420"><b>Paramita</b><i></i></span><span class="ch" data-s="3.420" data-e="4.480"><b>Hridaya</b><i></i></span></span><span class="grp"><span class="ch" data-s="4.480" data-e="5.940"><b>Sutram</b><i></i></span></span></div>
-  <div class="note">經題：聖般若波羅蜜多心經——般若（智慧）到彼岸的精要</div>
-</section>
-<section class="line" id="L1" data-s="5.64" data-e="12.1">
-  <div class="num">02</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="5.640" data-e="6.620"><b>Namah</b><i></i></span><span class="ch" data-s="6.620" data-e="7.040"><b>Sarwa</b><i></i></span><span class="ch" data-s="7.040" data-e="7.920"><b>Jnaya</b><i></i></span><span class="ch" data-s="7.920" data-e="9.000"><b>Arya</b><i></i></span></span><span class="grp"><span class="ch" data-s="9.000" data-e="10.460"><b>Walukiteshwara</b><i></i></span><span class="ch" data-s="10.460" data-e="12.100"><b>Bodhisattva</b><i></i></span></span></div>
-  <div class="note">禮敬一切智者（佛陀）；觀自在菩薩（觀世音菩薩）</div>
-</section>
-<section class="line" id="L2" data-s="11.8" data-e="16.38">
-  <div class="num">03</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="11.800" data-e="13.340"><b>Gambirayam</b><i></i></span><span class="ch" data-s="13.340" data-e="14.420"><b>Prajanya</b><i></i></span><span class="ch" data-s="14.420" data-e="16.380"><b>Paramitayam</b><i></i></span></span></div>
-  <div class="note">於甚深般若波羅蜜多（深智慧）之中</div>
-</section>
-<section class="line" id="L3" data-s="16.08" data-e="21.32">
-  <div class="num">04</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="16.080" data-e="17.400"><b>Charyam</b><i></i></span><span class="ch" data-s="17.400" data-e="19.360"><b>Charamanobya</b><i></i></span><span class="ch" data-s="19.360" data-e="21.320"><b>Walukayatisma</b><i></i></span></span></div>
-  <div class="note">修行觀照（行深般若波羅蜜多時）</div>
-</section>
-<section class="line" id="L4" data-s="21.02" data-e="28.28">
-  <div class="num">05</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="21.020" data-e="22.040"><b>Pangja</b><i></i></span><span class="ch" data-s="22.040" data-e="23.040"><b>Skandah</b><i></i></span><span class="ch" data-s="23.040" data-e="24.160"><b>Damstha</b><i></i></span><span class="ch" data-s="24.160" data-e="25.220"><b>Swabhava</b><i></i></span></span><span class="grp"><span class="ch" data-s="25.220" data-e="26.440"><b>Shunyam</b><i></i></span><span class="ch" data-s="26.440" data-e="28.280"><b>Paswatisma</b><i></i></span></span></div>
-  <div class="note">照見五蘊（色受想行識）皆自性空</div>
-</section>
-<section class="line" id="L5" data-s="27.98" data-e="35.42">
-  <div class="num">06</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="27.980" data-e="30.520"><b>Charyaputra</b><i></i></span><span class="ch" data-s="30.520" data-e="31.400"><b>Rupam</b><i></i></span><span class="ch" data-s="31.400" data-e="32.540"><b>Shunyada</b><i></i></span><span class="ch" data-s="32.540" data-e="34.260"><b>Shunyadaiwa</b><i></i></span></span><span class="grp"><span class="ch" data-s="34.260" data-e="35.420"><b>Rupam</b><i></i></span></span></div>
-  <div class="note">舍利子！色即是空，空即是色</div>
-</section>
-<section class="line" id="L6" data-s="35.12" data-e="42.02">
-  <div class="num">07</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="35.120" data-e="36.180"><b>Rupam</b><i></i></span><span class="ch" data-s="36.180" data-e="36.660"><b>Na</b><i></i></span><span class="ch" data-s="36.660" data-e="37.380"><b>Prithak</b><i></i></span><span class="ch" data-s="37.380" data-e="39.740"><b>Shunyadaiya</b><i></i></span></span><span class="grp"><span class="ch" data-s="39.740" data-e="40.340"><b>Na</b><i></i></span><span class="ch" data-s="40.340" data-e="41.040"><b>Prithak</b><i></i></span><span class="ch" data-s="41.040" data-e="42.020"><b>Rupam</b><i></i></span></span></div>
-  <div class="note">色不異空，空不異色</div>
-</section>
-<section class="line" id="L7" data-s="41.72" data-e="48.6">
-  <div class="num">08</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="41.720" data-e="42.340"><b>Yad</b><i></i></span><span class="ch" data-s="42.340" data-e="43.140"><b>Rupam</b><i></i></span><span class="ch" data-s="43.140" data-e="43.780"><b>Sa</b><i></i></span><span class="ch" data-s="43.780" data-e="45.760"><b>Shunyadaiya</b><i></i></span></span><span class="grp"><span class="ch" data-s="45.760" data-e="47.080"><b>Shunyadat</b><i></i></span><span class="ch" data-s="47.080" data-e="48.600"><b>Rupam</b><i></i></span></span></div>
-  <div class="note">色即是空，空即是色（重述肯定）</div>
-</section>
-<section class="line" id="L8" data-s="48.3" data-e="55.4">
-  <div class="num">09</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="48.300" data-e="49.080"><b>Aewam</b><i></i></span><span class="ch" data-s="49.080" data-e="49.820"><b>Aewa</b><i></i></span><span class="ch" data-s="49.820" data-e="51.000"><b>Buidana</b><i></i></span><span class="ch" data-s="51.000" data-e="52.200"><b>Sanjnaya</b><i></i></span></span><span class="grp"><span class="ch" data-s="52.200" data-e="53.320"><b>Sabskara</b><i></i></span><span class="ch" data-s="53.320" data-e="54.300"><b>Bujjnaya</b><i></i></span><span class="ch" data-s="54.300" data-e="55.400"><b>Nani</b><i></i></span></span></div>
-  <div class="note">受、想、行、識，亦復如是（同樣是空）</div>
-</section>
-<section class="line" id="L9" data-s="56.06" data-e="64.82">
-  <div class="num">10</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="56.060" data-e="57.800"><b>Charyaputra</b><i></i></span><span class="ch" data-s="57.800" data-e="58.540"><b>Sarwa</b><i></i></span><span class="ch" data-s="58.540" data-e="59.240"><b>Dharma</b><i></i></span><span class="ch" data-s="59.240" data-e="60.500"><b>Shunyada</b><i></i></span></span><span class="grp"><span class="ch" data-s="60.500" data-e="61.900"><b>Lakshana</b><i></i></span><span class="ch" data-s="61.900" data-e="63.140"><b>Anutpanna</b><i></i></span><span class="ch" data-s="63.140" data-e="64.820"><b>Aniruddha</b><i></i></span></span></div>
-  <div class="note">舍利子！一切法空相：不生不滅</div>
-</section>
-<section class="line" id="L10" data-s="64.52" data-e="70.64">
-  <div class="num">11</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="64.520" data-e="65.440"><b>Amala</b><i></i></span><span class="ch" data-s="65.440" data-e="66.520"><b>Abhimala</b><i></i></span><span class="ch" data-s="66.520" data-e="67.720"><b>Nunana</b><i></i></span><span class="ch" data-s="67.720" data-e="69.640"><b>Parupurana</b><i></i></span></span><span class="grp"><span class="ch" data-s="69.640" data-e="70.640"><b>Tasma</b><i></i></span></span></div>
-  <div class="note">不垢不淨，不增不減；所以（因此）</div>
-</section>
-<section class="line" id="L11" data-s="70.34" data-e="76.52">
-  <div class="num">12</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="70.340" data-e="72.100"><b>Charyaputra</b><i></i></span><span class="ch" data-s="72.100" data-e="73.620"><b>Shunyadaiya</b><i></i></span><span class="ch" data-s="73.620" data-e="73.980"><b>Na</b><i></i></span><span class="ch" data-s="73.980" data-e="74.740"><b>Rupam</b><i></i></span></span><span class="grp"><span class="ch" data-s="74.740" data-e="75.200"><b>Na</b><i></i></span><span class="ch" data-s="75.200" data-e="76.520"><b>Buidana</b><i></i></span></span></div>
-  <div class="note">舍利子！空中無色，亦無受</div>
-</section>
-<section class="line" id="L12" data-s="76.22" data-e="82.6">
-  <div class="num">13</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="76.220" data-e="76.720"><b>Na</b><i></i></span><span class="ch" data-s="76.720" data-e="77.620"><b>Sanjnaya</b><i></i></span><span class="ch" data-s="77.620" data-e="77.940"><b>Na</b><i></i></span><span class="ch" data-s="77.940" data-e="79.040"><b>Sabskara</b><i></i></span></span><span class="grp"><span class="ch" data-s="79.040" data-e="79.500"><b>Na</b><i></i></span><span class="ch" data-s="79.500" data-e="80.360"><b>Bujnaya</b><i></i></span><span class="ch" data-s="80.360" data-e="81.060"><b>Na</b><i></i></span><span class="ch" data-s="81.060" data-e="82.600"><b>Chachuh</b><i></i></span></span></div>
-  <div class="note">無想、無行、無識；無眼（根）</div>
-</section>
-<section class="line" id="L13" data-s="82.3" data-e="87.74">
-  <div class="num">14</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="82.300" data-e="83.160"><b>Shrodra</b><i></i></span><span class="ch" data-s="83.160" data-e="84.400"><b>Grana</b><i></i></span><span class="ch" data-s="84.400" data-e="85.480"><b>Jihua</b><i></i></span><span class="ch" data-s="85.480" data-e="86.340"><b>Kaya</b><i></i></span></span><span class="grp"><span class="ch" data-s="86.340" data-e="87.740"><b>Manamsi</b><i></i></span></span></div>
-  <div class="note">無耳、鼻、舌、身、意（六根皆空）</div>
-</section>
-<section class="line" id="L14" data-s="87.44" data-e="93.1">
-  <div class="num">15</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="87.440" data-e="87.920"><b>Na</b><i></i></span><span class="ch" data-s="87.920" data-e="88.520"><b>Rupa</b><i></i></span><span class="ch" data-s="88.520" data-e="89.340"><b>Shabda</b><i></i></span><span class="ch" data-s="89.340" data-e="90.160"><b>Gandah</b><i></i></span></span><span class="grp"><span class="ch" data-s="90.160" data-e="90.780"><b>Rasa</b><i></i></span><span class="ch" data-s="90.780" data-e="92.180"><b>Sprashtabhya</b><i></i></span><span class="ch" data-s="92.180" data-e="93.100"><b>Dharma</b><i></i></span></span></div>
-  <div class="note">無色、聲、香、味、觸、法（六塵皆空）</div>
-</section>
-<section class="line" id="L15" data-s="92.8" data-e="99.58">
-  <div class="num">16</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="92.800" data-e="93.220"><b>Na</b><i></i></span><span class="ch" data-s="93.220" data-e="93.980"><b>Chachuh</b><i></i></span><span class="ch" data-s="93.980" data-e="94.860"><b>Dadu</b><i></i></span><span class="ch" data-s="94.860" data-e="95.880"><b>Yaawan</b><i></i></span></span><span class="grp"><span class="ch" data-s="95.880" data-e="96.460"><b>Na</b><i></i></span><span class="ch" data-s="96.460" data-e="97.260"><b>Mano</b><i></i></span><span class="ch" data-s="97.260" data-e="98.020"><b>Bujnaya</b><i></i></span><span class="ch" data-s="98.020" data-e="98.560"><b>Na</b><i></i></span></span><span class="grp"><span class="ch" data-s="98.560" data-e="99.580"><b>Dadu</b><i></i></span></span></div>
-  <div class="note">無眼界，乃至無意識界（十八界皆空）</div>
-</section>
-<section class="line" id="L16" data-s="99.28" data-e="106.38">
-  <div class="num">17</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="99.280" data-e="99.780"><b>Na</b><i></i></span><span class="ch" data-s="99.780" data-e="100.840"><b>Abhidhiya</b><i></i></span><span class="ch" data-s="100.840" data-e="101.040"><b>Na</b><i></i></span><span class="ch" data-s="101.040" data-e="101.960"><b>Abhidhiya</b><i></i></span></span><span class="grp"><span class="ch" data-s="101.960" data-e="102.620"><b>Chayo</b><i></i></span><span class="ch" data-s="102.620" data-e="103.500"><b>Yaawan</b><i></i></span><span class="ch" data-s="103.500" data-e="103.960"><b>Na</b><i></i></span><span class="ch" data-s="103.960" data-e="104.780"><b>Jara</b><i></i></span></span><span class="grp"><span class="ch" data-s="104.780" data-e="106.380"><b>Maranam</b><i></i></span></span></div>
-  <div class="note">無無明，亦無無明盡；乃至無老死</div>
-</section>
-<section class="line" id="L17" data-s="106.08" data-e="113.72">
-  <div class="num">18</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="106.080" data-e="106.560"><b>Na</b><i></i></span><span class="ch" data-s="106.560" data-e="107.480"><b>Jara</b><i></i></span><span class="ch" data-s="107.480" data-e="108.760"><b>Maranam</b><i></i></span><span class="ch" data-s="108.760" data-e="109.480"><b>Chayo</b><i></i></span></span><span class="grp"><span class="ch" data-s="109.480" data-e="109.960"><b>Na</b><i></i></span><span class="ch" data-s="109.960" data-e="110.860"><b>Dukha</b><i></i></span><span class="ch" data-s="110.860" data-e="112.140"><b>Samudhaya</b><i></i></span><span class="ch" data-s="112.140" data-e="113.720"><b>Aniruddha</b><i></i></span></span></div>
-  <div class="note">無老死盡；無苦、集、滅（道）</div>
-</section>
-<section class="line" id="L18" data-s="113.42" data-e="118.46">
-  <div class="num">19</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="113.420" data-e="114.460"><b>Marga</b><i></i></span><span class="ch" data-s="114.460" data-e="114.840"><b>Na</b><i></i></span><span class="ch" data-s="114.840" data-e="116.000"><b>Jhanyanam</b><i></i></span><span class="ch" data-s="116.000" data-e="116.380"><b>Na</b><i></i></span></span><span class="grp"><span class="ch" data-s="116.380" data-e="117.300"><b>Prapadih</b><i></i></span><span class="ch" data-s="117.300" data-e="118.460"><b>Tasma</b><i></i></span></span></div>
-  <div class="note">無道；無智亦無得；所以（因此）</div>
-</section>
-<section class="line" id="L19" data-s="118.16" data-e="124.72">
-  <div class="num">20</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="118.160" data-e="119.840"><b>Aprapatitva</b><i></i></span><span class="ch" data-s="119.840" data-e="121.780"><b>Bodhisattranam</b><i></i></span><span class="ch" data-s="121.780" data-e="122.900"><b>Prajnaya</b><i></i></span><span class="ch" data-s="122.900" data-e="124.720"><b>Paramidham</b><i></i></span></span></div>
-  <div class="note">以無所得故，菩薩依般若波羅蜜多</div>
-</section>
-<section class="line" id="L20" data-s="124.42" data-e="132.28">
-  <div class="num">21</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="124.420" data-e="126.240"><b>Ashridhiya</b><i></i></span><span class="ch" data-s="126.240" data-e="127.500"><b>Biharati</b><i></i></span><span class="ch" data-s="127.500" data-e="129.780"><b>Achittavarana</b><i></i></span><span class="ch" data-s="129.780" data-e="132.280"><b>Achittavarana</b><i></i></span></span></div>
-  <div class="note">心無罣礙（無有障礙）</div>
-</section>
-<section class="line" id="L21" data-s="132.57999999999998" data-e="138.78">
-  <div class="num">22</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="132.560" data-e="133.260"><b>Anastitva</b><i></i></span><span class="ch" data-s="133.260" data-e="134.900"><b>Atrasto</b><i></i></span><span class="ch" data-s="134.900" data-e="136.820"><b>Vibharyasa</b><i></i></span><span class="ch" data-s="136.820" data-e="138.780"><b>Atikrandho</b><i></i></span></span></div>
-  <div class="note">無罣礙故，無有恐怖，遠離顛倒夢想</div>
-</section>
-<section class="line" id="L22" data-s="138.48" data-e="143.94">
-  <div class="num">23</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="138.480" data-e="139.500"><b>Nishtha</b><i></i></span><span class="ch" data-s="139.500" data-e="140.800"><b>Nirvana</b><i></i></span><span class="ch" data-s="140.800" data-e="141.780"><b>Triyatva</b><i></i></span><span class="ch" data-s="141.780" data-e="142.420"><b>Vya</b><i></i></span></span><span class="grp"><span class="ch" data-s="142.420" data-e="143.940"><b>Vasthidhah</b><i></i></span></span></div>
-  <div class="note">究竟涅槃；三世諸佛皆安住此法</div>
-</section>
-<section class="line" id="L23" data-s="143.64" data-e="147.58">
-  <div class="num">24</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="143.640" data-e="144.340"><b>Sarva</b><i></i></span><span class="ch" data-s="144.340" data-e="145.000"><b>Budhah</b><i></i></span><span class="ch" data-s="145.000" data-e="145.900"><b>Prajnaya</b><i></i></span><span class="ch" data-s="145.900" data-e="147.580"><b>Paramidham</b><i></i></span></span></div>
-  <div class="note">一切諸佛，依般若波羅蜜多</div>
-</section>
-<section class="line" id="L24" data-s="147.28" data-e="152.02">
-  <div class="num">25</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="147.280" data-e="148.780"><b>Ashridhiya</b><i></i></span><span class="ch" data-s="148.780" data-e="149.720"><b>Anudhara</b><i></i></span><span class="ch" data-s="149.720" data-e="150.760"><b>Samikh</b><i></i></span><span class="ch" data-s="150.760" data-e="152.020"><b>Sambodhim</b><i></i></span></span></div>
-  <div class="note">故得阿耨多羅三藐三菩提（無上正等正覺）</div>
-</section>
-<section class="line" id="L25" data-s="151.72" data-e="154.56">
-  <div class="num">26</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="151.720" data-e="152.380"><b>Api</b><i></i></span><span class="ch" data-s="152.380" data-e="153.500"><b>Sambuddha</b><i></i></span><span class="ch" data-s="153.500" data-e="154.560"><b>Tasma</b><i></i></span></span></div>
-  <div class="note">皆已成正覺；所以（因此）</div>
-</section>
-<section class="line" id="L26" data-s="154.26" data-e="158.4">
-  <div class="num">27</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="154.260" data-e="155.660"><b>Jhanyadaviyam</b><i></i></span><span class="ch" data-s="155.660" data-e="156.660"><b>Prajnaya</b><i></i></span><span class="ch" data-s="156.660" data-e="158.400"><b>Paramidham</b><i></i></span></span></div>
-  <div class="note">應知般若波羅蜜多</div>
-</section>
-<section class="line" id="L27" data-s="158.7" data-e="166.38">
-  <div class="num">28</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="158.700" data-e="159.580"><b>Mahamandro</b><i></i></span><span class="ch" data-s="159.580" data-e="161.080"><b>Mahabhidhiya</b><i></i></span><span class="ch" data-s="161.080" data-e="161.880"><b>Mandro</b><i></i></span><span class="ch" data-s="161.880" data-e="162.980"><b>Anudhara</b><i></i></span></span><span class="grp"><span class="ch" data-s="162.980" data-e="163.900"><b>Mandra</b><i></i></span><span class="ch" data-s="163.900" data-e="165.060"><b>Asamasama</b><i></i></span><span class="ch" data-s="165.060" data-e="166.380"><b>Mandra</b><i></i></span></span></div>
-  <div class="note">是大神咒，是大明咒，是無上咒，是無等等咒</div>
-</section>
-<section class="line" id="L28" data-s="166.08" data-e="172.04">
-  <div class="num">29</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="166.080" data-e="166.880"><b>Sarva</b><i></i></span><span class="ch" data-s="166.880" data-e="167.720"><b>Dukha</b><i></i></span><span class="ch" data-s="167.720" data-e="169.160"><b>Prashamana</b><i></i></span><span class="ch" data-s="169.160" data-e="170.300"><b>Sadhyam</b><i></i></span></span><span class="grp"><span class="ch" data-s="170.300" data-e="172.040"><b>Amitiyatkuat</b><i></i></span></span></div>
-  <div class="note">能除一切苦，真實不虛</div>
-</section>
-<section class="line" id="L29" data-s="171.74" data-e="176.4">
-  <div class="num">30</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="171.740" data-e="172.800"><b>Prajnaya</b><i></i></span><span class="ch" data-s="172.800" data-e="174.380"><b>Paramidhayam</b><i></i></span><span class="ch" data-s="174.380" data-e="175.320"><b>Huktau</b><i></i></span><span class="ch" data-s="175.320" data-e="176.400"><b>Mandra</b><i></i></span></span></div>
-  <div class="note">故說般若波羅蜜多咒</div>
-</section>
-<section class="line" id="L30" data-s="176.1" data-e="183.44">
-  <div class="num">31</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="176.100" data-e="177.260"><b>Dadhiyatha</b><i></i></span><span class="ch" data-s="177.260" data-e="178.080"><b>Gadeh</b><i></i></span><span class="ch" data-s="178.080" data-e="179.000"><b>Gadeh</b><i></i></span><span class="ch" data-s="179.000" data-e="180.320"><b>Paragadeh</b><i></i></span></span><span class="grp"><span class="ch" data-s="180.320" data-e="181.760"><b>Parasangadeh</b><i></i></span><span class="ch" data-s="181.760" data-e="182.400"><b>Bodhi</b><i></i></span><span class="ch" data-s="182.400" data-e="183.440"><b>Swaha</b><i></i></span></span></div>
-  <div class="note">即說咒曰：揭諦揭諦，波羅揭諦，波羅僧揭諦，菩提薩婆訶（去吧去吧，到彼岸去吧，願速證菩提）</div>
-</section>
-<section class="line" id="L31" data-s="183.14" data-e="189.84">
-  <div class="num">32</div>
-  <div class="syl"><span class="grp"><span class="ch" data-s="183.140" data-e="183.920"><b>Iti</b><i></i></span><span class="ch" data-s="183.920" data-e="184.740"><b>Prajnaya</b><i></i></span><span class="ch" data-s="184.740" data-e="185.980"><b>Paramidha</b><i></i></span><span class="ch" data-s="185.980" data-e="186.920"><b>Hridaya</b><i></i></span></span><span class="grp"><span class="ch" data-s="186.920" data-e="188.000"><b>Sutram</b><i></i></span><span class="ch" data-s="188.000" data-e="189.840"><b>Samaktam</b><i></i></span></span></div>
-  <div class="note">般若波羅蜜多心經（圓滿終）</div>
-</section>
-</div>
+<div class="backlink"><a href="../home.html">🏠 返回選經主頁</a></div>
 
 <script>
+// ══ 長者版：讀取設置（P2 設置頁寫入 localStorage）＋按鈕聲效振動 ══
+const MK = {
+  get(k, d) { try { const v = localStorage.getItem('mk_' + k); return v === null ? d : v; } catch(e) { return d; } },
+  set(k, v) { try { localStorage.setItem('mk_' + k, v); } catch(e) {} }
+};
+// 聲效（WebAudio click）：每撳掣短「噠」聲；振動：Android 支援
+let _actx = null;
+function tapFx() {
+  try {
+    if (navigator.vibrate) navigator.vibrate(12);
+    if (!window.AudioContext && !window.webkitAudioContext) return;
+    _actx = _actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (_actx.state === 'suspended') _actx.resume();
+    const o = _actx.createOscillator(), g = _actx.createGain();
+    o.type = 'sine'; o.frequency.value = 620;
+    g.gain.setValueAtTime(0.12, _actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, _actx.currentTime + 0.07);
+    o.connect(g); g.connect(_actx.destination);
+    o.start(); o.stop(_actx.currentTime + 0.08);
+  } catch(e) {}
+}
+document.addEventListener('click', e => { if (e.target.closest('button, .navbtn, select, .line')) tapFx(); });
+// 字體級別：f0 標準 / f1 大 / f2 特大
+const FONT = MK.get('font', '0');
+document.body.classList.add('f' + FONT);
+if (MK.get('py', '1') === '0') document.body.classList.add('nopy');
+if (MK.get('note', '1') === '0') document.body.classList.add('nonote');
 const AUDIO = document.getElementById('au');
 const DUR = 189.54, LAST_END = 189.84;
 // 速度 → 離線音頻檔（atempo 保音高，音色唔變）。scale = 原軸時間 × rate = currentTime
@@ -314,7 +360,8 @@ const RATES = {
   '1.25': {f:'audio_125.m4a', s:1.25},
   '1.5':  {f:'audio_150.m4a', s:1.5}
 };
-let curRate = '1';
+let curRate = MK.get('speed', '1');   // P2 記低嘅速度
+if (!RATES[curRate]) curRate = '1';
 let align = 0;   // 對齊偏移（秒）：正數＝highlight 遲啲亮
 let chars = [], lines = [];
 document.querySelectorAll('.line').forEach(sec => {
@@ -340,7 +387,10 @@ function renderCur(i) {
   });
   cur.appendChild(syl);
   const note = document.createElement('div'); note.className = 'note';
-  note.textContent = src.querySelector('.note').textContent;
+  // 中文註解：explanations.json perLine 優先（冇就用 data 內嵌 explain）
+  let txt = src.querySelector('.note').textContent;
+  if (window.__EX && window.__EX.perLine && window.__EX.perLine[i]) txt = window.__EX.perLine[i];
+  note.textContent = txt;
   cur.appendChild(note);
   chars = [];
   cur.querySelectorAll('.ch').forEach(el => chars.push({el, s:parseFloat(el.dataset.s), e:parseFloat(el.dataset.e)}));
@@ -349,7 +399,9 @@ let curIdx = -1;
 let abA = -1, abB = -1;   // 原時間軸
 let singleLine = -1;      // 🔂 單句重複：-1 = 關
 let seeking = false;      // seek 進行中，防重入
-let goal = 0, remain = 0, counting = false, passCounted = false;
+let goal = parseInt(MK.get('goal', '0')) || 0, remain = goal, counting = false, passCounted = false;
+let goalTag = document.getElementById('goalTag');
+function updGoalTag() { if (goalTag) goalTag.textContent = '目標 ' + (goal === 0 ? '∞' : goal); }
 
 function applyLit(t) {
   let lit = -1;
@@ -368,12 +420,14 @@ function seekTo(tRaw) {
 function updCounter() {
   const el = document.getElementById('remain');
   el.textContent = goal === 0 ? '∞' : remain;
+  updGoalTag();
 }
 document.getElementById('goal').onchange = e => {
   goal = parseInt(e.target.value);
   remain = goal;
   counting = false; passCounted = false;
   document.getElementById('done').style.display = 'none';
+  MK.set('goal', String(goal));
   updCounter();
 };
 
@@ -494,6 +548,7 @@ document.getElementById('restartBtn').onclick = () => {
 document.getElementById('rate').onchange = e => {
   const wasPlaying = !AUDIO.paused;
   curRate = e.target.value;
+  MK.set('speed', curRate);
   const r = RATES[curRate];
   AUDIO.src = r.f;
   AUDIO.load();
@@ -501,6 +556,7 @@ document.getElementById('rate').onchange = e => {
 };
 document.getElementById('align').onchange = e => {
   align = parseFloat(e.target.value) || 0;
+  MK.set('align', String(align));
   if (curIdx >= 0) { renderCur(curIdx); applyLit(AUDIO.currentTime * RATES[curRate].s + align); }
 };
 document.getElementById('loopBtn').onclick = () => {
@@ -558,156 +614,6 @@ lines.forEach((L, i) => L.sec.onclick = () => {
 });
 document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); document.getElementById('playBtn').click(); } });
 
-// 輸入影片連結對話框（三重保險複製：Clipboard API → execCommand → 手動）
-async function copyText(url) {
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(url);
-      return true;
-    }
-  } catch(e) {}
-  try {
-    const ta = document.createElement('textarea');
-    ta.value = url;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.top = '-9999px';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    ta.setSelectionRange(0, url.length);
-    const ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-    return ok;
-  } catch(e) { return false; }
-}
-document.getElementById('linkGo').onclick = async () => {
-  const url = document.getElementById('linkInput').value.trim();
-  const msg = document.getElementById('linkMsg');
-  const btn = document.getElementById('linkGo');
-  if (!/^https?:\/\//i.test(url)) {
-    msg.className = 'msg'; msg.textContent = '⚠ 請輸入完整連結（http/https 開頭）';
-    return;
-  }
-  btn.textContent = '⏳ 提交中…';
-  msg.className = 'msg';
-  showProgress(url);  // 即刻顯示進度面板，唔使等 submit 返回
-  const ctl = new AbortController();
-  const t = setTimeout(() => ctl.abort(), 10000);  // 10 秒 timeout，唔會卡死
-  try {
-    // 全自動：直接交畀自動工廠（Mac mini），唔使經 Hermes 對話
-    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/submit?url=' +
-      encodeURIComponent(url) + '&title=' + encodeURIComponent(document.title), {method: 'POST', signal: ctl.signal});
-    clearTimeout(t);
-    const d = await r.json();
-    if (d.ok) {
-      btn.textContent = '✅ 已提交！';
-      msg.className = 'msg ok';
-      msg.textContent = '✅ 已交畀自動工廠！進度 bar 會逐格跳，完成會彈出跟唸版連結（約 2–5 分鐘）。';
-      return;
-    }
-    throw new Error(d.error || 'submit failed');
-  } catch(e) {
-    clearTimeout(t);
-    // 工廠連唔到（Mac mini 關機/網絡）→ fallback 舊流程：複製去 Hermes 對話
-    btn.textContent = '⚠ 工廠離線';
-    const ok = await copyText(url);
-    btn.textContent = ok ? '⚠ 已複製（後備）' : '⚠ 複製失敗';
-    msg.className = 'msg';
-    msg.textContent = '自動工廠暫時連唔到（' + (e.message || e) + '）— 下面條連結已經選取，長按／點兩下就可以複製，再貼去 Hermes 對話一樣得：';
-    const u = document.createElement('div');
-    u.style.cssText = 'margin-top:6px;padding:6px 10px;background:#241545;border-radius:8px;word-break:break-all;color:#ffd54a;font-size:12px;user-select:all;-webkit-user-select:all;';
-    u.textContent = url;
-    msg.appendChild(u);
-    const c2 = document.createElement('button');
-    c2.style.cssText = 'margin-top:8px;background:#7c5cff;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;';
-    c2.textContent = '📋 手動複製';
-    c2.onclick = async () => { c2.textContent = (await copyText(url)) ? '✅ 複製咗！' : '⚠ 再試（長按下面條連結）'; };
-    msg.appendChild(c2);
-  }
-};
-
-// ── 處理進度 bar：提交後輪詢 status.json（Hermes 每階段 git push 更新）──
-const STAGES = ['等待處理','下載影片','轉錄經文','整理拼音解釋','生成跟唸版','上架公開站','完成'];
-let pollTimer = null;
-function showProgress(url) {
-  let panel = document.getElementById('ppanel');
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.className = 'ppanel'; panel.id = 'ppanel';
-    panel.innerHTML =
-      '<div class="phead">⏳ Hermes 處理中 — 自動更新進度</div>' +
-      [1,2,3,4,5].map(s => `<div class="prow" data-st="${s}"><span>${s}. ${STAGES[s]}</span><div class="pbar"><i></i></div></div>`).join('') +
-      '<div class="pnote" id="pnote">等待 Hermes 開始處理…</div>';
-    document.querySelector('.linkbox').appendChild(panel);
-  }
-  panel.style.display = 'block';
-  clearInterval(pollTimer);
-  pollTimer = setInterval(() => pollStatus(url), 3000);
-  pollStatus(url);
-}
-function renderStages(job) {
-  const rows = document.querySelectorAll('.ppanel .prow');
-  rows.forEach(r => r.classList.remove('done','active'));
-  const st = job.stage || 0;
-  rows.forEach(r => {
-    const n = parseInt(r.dataset.st);
-    if (st > n) r.classList.add('done');
-    else if (st === n && st < 6) r.classList.add('active');
-    else if (st >= 6) r.classList.add('done');
-  });
-  const note = document.getElementById('pnote');
-  if (st >= 6) {
-    const u = job.url || '';
-    if (!u) { note.textContent = '✅ 已上架！'; clearInterval(pollTimer); return; }
-    pollDone(u, note);
-  } else {
-    note.textContent = '⏳ ' + (job.stageName || STAGES[st] || '處理中') + '…（每 10 秒自動更新）';
-  }
-}
-const READY = {};
-const READY_TRIES = {};
-function pollDone(u, note) {
-  // 等 GitHub Pages build（25–55 秒）先出開啟掣，避免撳入去撞 404；
-  // 上限 120 秒照出（Pages 快取慢時唔好永遠等）
-  READY_TRIES[u] = (READY_TRIES[u] || 0) + 1;
-  if (READY[u] === 1 || READY_TRIES[u] > 40) {
-    note.innerHTML = '✅ <b>已上架！</b> <a href="' + u + '">開啟跟唸版 →</a>';
-    clearInterval(pollTimer);
-    return;
-  }
-  checkReady(u).then(ok => {
-    if (ok) {
-      READY[u] = 1;
-      note.innerHTML = '✅ <b>已上架！</b> <a href="' + u + '">開啟跟唸版 →</a>';
-      clearInterval(pollTimer);
-    } else {
-      note.textContent = '⏳ 已上架 — 公開站發佈中（約 30 秒），自動偵測完成後彈掣…';
-    }
-  });
-}
-function checkReady(u) {
-  return fetch(u + '?t=' + Date.now(), {method:'HEAD', cache:'no-store'})
-    .then(r => r.ok)
-    .catch(() => false);
-}async function pollStatus(url) {
-  let d = null;
-  // 即時狀態：直接問工廠（443，冇 CDN cache）
-  try {
-    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/status?url=' + encodeURIComponent(url), {cache:'no-store'});
-    if (r.ok) d = await r.json();
-  } catch(e) {}
-  // 後備：GitHub Pages status.json（有 CDN cache，會慢幾分鐘）
-  if (!d || !d.jobs) {
-    try {
-      const r = await fetch('status.json?t=' + Date.now(), {cache:'no-store'});
-      if (r.ok) d = await r.json();
-    } catch(e) {}
-  }
-  if (!d || !d.jobs) return;
-  const job = d.jobs[url];
-  renderStages(job ? job : {stage: 0, stageName: '等待開始處理', url: ''});
-}
 // ── 經文解釋：直接顯示喺唸讀框（explanations.json perLine 逐句義理）──
 (async () => {
   try {
@@ -724,6 +630,25 @@ function checkReady(u) {
     if (window.__EX && window.__EX.perLine && curIdx >= 0) renderCur(curIdx);
   } catch(e) {}
 })();
+// 讀取設置：速度／對齊／目標 select 同步（長者版 P2 寫入 localStorage）
+(function initMK() {
+  const rs = document.getElementById('rate');
+  if (rs) rs.value = curRate;
+  if (curRate !== '1' && RATES[curRate]) { AUDIO.src = RATES[curRate].f; AUDIO.load(); }
+  const al = document.getElementById('align');
+  if (al) al.value = MK.get('align', '0');
+  const gs = document.getElementById('goal');
+  if (gs) gs.value = String(goal);
+  align = parseFloat(MK.get('align', '0')) || 0;
+  // ← 返回：去設置頁（帶 card slug + title），唔係首頁
+  const bb = document.getElementById('backBtn');
+  if (bb) {
+    const segs = location.pathname.split('/').filter(Boolean);
+    const slug = segs[segs.length - 2] || '';
+    bb.href = '../settings.html?card=' + encodeURIComponent(slug) + '&t=' + encodeURIComponent(document.title.split('·')[0].trim());
+  }
+})();
+window.__EX = window.__EX || null;
 renderCur(0);
 updAB(); updCounter();
 </script>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>⚙ 讀經設置</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:0 16px 40px; }
+  /* 頂欄：返回 / title / 版本 / 完全退出 */
+  .topnav { position:sticky; top:0; z-index:50; display:flex; align-items:center; gap:10px; background:rgba(21,10,40,.92); backdrop-filter:blur(6px); padding:12px 4px; border-bottom:1px solid rgba(255,213,74,.18); }
+  .navbtn { display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 20px; border-radius:16px; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.08); color:#ffd54a; font-size:20px; font-weight:700; text-decoration:none; cursor:pointer; flex-shrink:0; }
+  .navbtn:active { transform:scale(.96); background:rgba(255,213,74,.2); }
+  .navbtn.exit { border-color:rgba(255,120,120,.5); background:rgba(255,80,80,.12); color:#ffb0b0; }
+  .t-title { flex:1; text-align:center; font-size:22px; font-weight:700; color:#ffd54a; letter-spacing:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ver { font-size:13px; color:#9b8cc0; background:rgba(21,10,40,.8); border:1px solid rgba(107,79,176,.45); padding:3px 10px; border-radius:12px; flex-shrink:0; }
+  h1 { text-align:center; font-size:30px; letter-spacing:4px; color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.35); margin:26px 0 4px; }
+  .sub { text-align:center; font-size:16px; color:#b9a8e8; letter-spacing:1px; margin-bottom:26px; }
+  .wrap { max-width:640px; margin:0 auto; }
+  /* 選項組 */
+  .group { background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.22); border-radius:20px; padding:18px 16px; margin-bottom:18px; }
+  .glabel { font-size:19px; font-weight:700; color:#ffd54a; margin-bottom:14px; letter-spacing:1px; }
+  .opts { display:flex; flex-wrap:wrap; gap:12px; }
+  .opt { flex:1 1 90px; min-height:64px; display:inline-flex; align-items:center; justify-content:center; border-radius:18px; border:2px solid rgba(155,140,192,.35); background:rgba(155,140,192,.08); color:#e8e0f5; font-size:21px; font-weight:700; cursor:pointer; user-select:none; padding:8px 12px; }
+  .opt:active { transform:scale(.95); }
+  .opt.sel { border-color:#ffd54a; background:rgba(255,213,74,.2); color:#ffd54a; box-shadow:0 0 14px rgba(255,213,74,.3); }
+  .opt .sm { display:block; font-size:13px; font-weight:400; color:#b9a8e8; text-align:center; }
+  .opt.sel .sm { color:#ffe9a0; }
+  /* 開始讀經大掣 */
+  .go { display:block; width:100%; min-height:84px; margin-top:10px; border:none; border-radius:24px; background:linear-gradient(135deg,#2ea043,#7ee787); color:#05330f; font-size:30px; font-weight:800; letter-spacing:2px; cursor:pointer; box-shadow:0 6px 24px rgba(46,160,67,.4); }
+  .go:active { transform:scale(.98); }
+  .gowrap { position:sticky; bottom:0; padding:14px 0 18px; background:linear-gradient(180deg,transparent,rgba(21,10,40,.95) 30%); }
+  /* 管理區（加經） */
+  .admin { margin-top:26px; border-top:1px dashed rgba(255,213,74,.3); padding-top:18px; }
+  .linkbox { background:rgba(255,255,255,.03); border:1px dashed rgba(255,213,74,.35); border-radius:14px; padding:14px 14px; }
+  .linkbox label { font-size:15px; color:#c9b8f0; display:block; margin-bottom:10px; }
+  .linkbox .row { display:flex; gap:10px; flex-wrap:wrap; }
+  .linkbox input { flex:1; min-width:200px; background:#241545; color:#e8e0f5; border:2px solid #6a4fb0; border-radius:14px; padding:14px 14px; font-size:17px; outline:none; }
+  .linkbox input:focus { border-color:#ffd54a; }
+  .linkbox button { background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; border:none; border-radius:16px; padding:14px 22px; font-size:17px; font-weight:700; cursor:pointer; }
+  .linkbox .msg { font-size:14px; color:#9b8cc0; margin-top:10px; line-height:1.6; }
+  .linkbox .msg.ok { color:#7ee787; }
+  .ppanel { margin-top:12px; border-top:1px solid rgba(255,213,74,.2); padding-top:12px; }
+  .ppanel .phead { font-size:14px; color:#ffd54a; margin-bottom:8px; }
+  .ppanel .prow { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
+  .ppanel .prow span { font-size:13px; color:#c9b8f0; width:110px; flex-shrink:0; }
+  .ppanel .pbar { flex:1; height:10px; background:#3a2a66; border-radius:5px; overflow:hidden; }
+  .ppanel .pbar i { display:block; height:100%; width:0%; background:linear-gradient(90deg,#6a4fb0,#b39ddb); border-radius:5px; transition:width .6s; }
+  .ppanel .prow.done span { color:#7ee787; }
+  .ppanel .prow.done .pbar i { width:100%; background:linear-gradient(90deg,#2ea043,#7ee787); }
+  .ppanel .prow.active .pbar i { width:55%; background:linear-gradient(90deg,#ffd54a,#ff9d2e); animation:pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:.5;} 50%{opacity:1;} }
+  .ppanel .pnote { font-size:13px; color:#9b8cc0; margin-top:6px; }
+  .ppanel .pnote a { color:#7ee787; font-size:15px; }
+  .hint { text-align:center; font-size:14px; color:#7d6ea8; margin-top:14px; line-height:1.7; }
+  @media (max-width:480px) { .t-title { font-size:18px; } h1 { font-size:25px; } }
+</style>
+</head>
+<body>
+<div class="topnav">
+  <a class="navbtn" href="home.html" title="返回上一頁">← 返回</a>
+  <div class="t-title" id="pageTitle">讀經設置</div>
+  <a class="navbtn exit" href="exit.html" title="完全退出">✕ 退出</a>
+  <span class="ver">v4.10.0</span>
+</div>
+<h1>⚙ 讀經設置</h1>
+<div class="sub" id="cardSub">揀好之後㩒下面綠色大掣開始讀經</div>
+
+<div class="wrap">
+  <!-- 音速 -->
+  <div class="group">
+    <div class="glabel">🔊 音速</div>
+    <div class="opts" id="optSpeed">
+      <div class="opt" data-v="0.5">慢 0.5×<span class="sm">逐字跟</span></div>
+      <div class="opt" data-v="0.75">0.75×<span class="sm">慢少少</span></div>
+      <div class="opt" data-v="1">原速 1×<span class="sm">標準</span></div>
+      <div class="opt" data-v="1.25">1.25×<span class="sm">快少少</span></div>
+      <div class="opt" data-v="1.5">快 1.5×<span class="sm">熟練</span></div>
+    </div>
+  </div>
+  <!-- 顯示選項 -->
+  <div class="group">
+    <div class="glabel">👁 顯示</div>
+    <div class="opts">
+      <div class="opt" id="optPy">拼音<span class="sm">逐字注音</span></div>
+      <div class="opt" id="optNote">中文註解<span class="sm">句義解釋</span></div>
+      <div class="opt" id="optFont">字體<span class="sm" id="fontSm">大</span></div>
+    </div>
+  </div>
+  <!-- 計次目標 -->
+  <div class="group">
+    <div class="glabel">🧮 唸誦目標</div>
+    <div class="opts" id="optGoal">
+      <div class="opt" data-v="0">∞<span class="sm">唔限</span></div>
+      <div class="opt" data-v="3">3 遍<span class="sm">小願</span></div>
+      <div class="opt" data-v="7">7 遍<span class="sm">七寶</span></div>
+      <div class="opt" data-v="21">21 遍<span class="sm">功課</span></div>
+      <div class="opt" data-v="108">108 遍<span class="sm">圓滿</span></div>
+    </div>
+  </div>
+
+  <div class="gowrap">
+    <button class="go" id="goBtn">▶ 開始讀經</button>
+    <div class="hint">設置會自動記低，下次唔使再揀。</div>
+  </div>
+
+  <!-- 管理區：加經（自動入播放清單＋齊 metadata） -->
+  <div class="admin">
+    <div class="group">
+      <div class="glabel">➕ 加新經（管理員用）</div>
+      <div class="linkbox">
+        <label>🔗 貼經文影片連結（視頻號／YouTube），自動轉做跟唸版並加入播放清單：</label>
+        <div class="row">
+          <input id="linkInput" type="url" placeholder="https://weixin.qq.com/sph/... 或 YouTube 連結" spellcheck="false">
+          <button id="linkGo">生成</button>
+        </div>
+        <div class="msg" id="linkMsg">自動工廠處理（下載→除背景音樂→轉錄→註解→上架→入播放清單），約 2–5 分鐘。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ 設置讀寫（localStorage，全站共用 mk_ 前綴）══
+const MK = {
+  get(k, d) { try { const v = localStorage.getItem('mk_' + k); return v === null ? d : v; } catch(e) { return d; } },
+  set(k, v) { try { localStorage.setItem('mk_' + k, v); } catch(e) {} }
+};
+let actx = null;
+function tapFx() {
+  try {
+    if (navigator.vibrate) navigator.vibrate(12);
+    if (!window.AudioContext && !window.webkitAudioContext) return;
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'sine'; o.frequency.value = 620;
+    g.gain.setValueAtTime(0.12, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.07);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime + 0.08);
+  } catch(e) {}
+}
+document.addEventListener('click', e => { if (e.target.closest('.opt, button, .navbtn')) tapFx(); });
+
+// ── 讀 URL ?card=<slug>&t=<title> ──
+const q = new URLSearchParams(location.search);
+const cardSlug = q.get('card') || '';
+const cardTitle = q.get('t') || '';
+if (cardTitle) {
+  document.title = '⚙ ' + cardTitle;
+  document.getElementById('pageTitle').textContent = cardTitle;
+  document.getElementById('cardSub').textContent = '揀好速度同顯示，㩒綠色大掣開始讀經';
+}
+
+// ── 選項組通用 ──
+function bindSingle(id, key, def, mapVal) {
+  const box = document.getElementById(id);
+  const cur = MK.get(key, def);
+  box.querySelectorAll('.opt').forEach(o => {
+    const v = mapVal ? mapVal(o) : o.dataset.v;
+    if (String(v) === String(cur)) o.classList.add('sel');
+    o.addEventListener('click', () => {
+      box.querySelectorAll('.opt').forEach(x => x.classList.remove('sel'));
+      o.classList.add('sel');
+      MK.set(key, String(v));
+      if (key === 'font') document.getElementById('fontSm').textContent = {0:'標準',1:'大',2:'特大'}[v] || '大';
+    });
+  });
+}
+bindSingle('optSpeed', 'speed', '1');
+bindSingle('optGoal', 'goal', '0');
+// 拼音（開/關 toggle）
+(function() {
+  const el = document.getElementById('optPy');
+  let on = MK.get('py', '1') !== '0';
+  const paint = () => { el.classList.toggle('sel', on); el.querySelector('.sm').textContent = on ? '顯示' : '隱藏'; };
+  paint();
+  el.addEventListener('click', () => { on = !on; MK.set('py', on ? '1' : '0'); paint(); });
+})();
+// 註解（開/關 toggle）
+(function() {
+  const el = document.getElementById('optNote');
+  let on = MK.get('note', '1') !== '0';
+  const paint = () => { el.classList.toggle('sel', on); el.querySelector('.sm').textContent = on ? '顯示' : '隱藏'; };
+  paint();
+  el.addEventListener('click', () => { on = !on; MK.set('note', on ? '1' : '0'); paint(); });
+})();
+// 字體（標準/大/特大循環）
+(function() {
+  const el = document.getElementById('optFont');
+  const LEVELS = [['0','標準'],['1','大'],['2','特大']];
+  let i = Math.max(0, LEVELS.findIndex(x => x[0] === MK.get('font', '1')));
+  if (i < 0) i = 1;
+  const paint = () => { el.classList.add('sel'); document.getElementById('fontSm').textContent = LEVELS[i][1]; };
+  paint();
+  el.addEventListener('click', () => { i = (i + 1) % LEVELS.length; MK.set('font', LEVELS[i][0]); paint(); });
+})();
+
+// ── 開始讀經 ──
+document.getElementById('goBtn').addEventListener('click', () => {
+  MK.set('ok', '1');
+  const target = cardSlug ? cardSlug + '/index.html' : 'home.html';
+  location.href = target;
+});
+
+// ── 加經（管理員）：直接交自動工廠，完成自動入播放清單 ──
+async function copyText(url) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(url); return true; }
+  } catch(e) {}
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-9999px';
+    document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, url.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch(e) { return false; }
+}
+document.getElementById('linkGo').onclick = async () => {
+  const url = document.getElementById('linkInput').value.trim();
+  const msg = document.getElementById('linkMsg');
+  const btn = document.getElementById('linkGo');
+  if (!/^https?:\/\//i.test(url)) { msg.className = 'msg'; msg.textContent = '⚠ 請輸入完整連結（http/https 開頭）'; return; }
+  btn.textContent = '⏳ 提交中…';
+  msg.className = 'msg';
+  showProgress(url);
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 10000);
+  try {
+    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/submit?url=' +
+      encodeURIComponent(url) + '&title=' + encodeURIComponent(document.title), {method: 'POST', signal: ctl.signal});
+    clearTimeout(t);
+    const d = await r.json();
+    if (d.ok) {
+      btn.textContent = '✅ 已提交！';
+      msg.className = 'msg ok';
+      msg.textContent = '✅ 已交畀自動工廠！進度 bar 會逐格跳，完成自動加入播放清單（約 2–5 分鐘）。';
+      return;
+    }
+    throw new Error(d.error || 'submit failed');
+  } catch(e) {
+    clearTimeout(t);
+    btn.textContent = '⚠ 工廠離線';
+    const ok = await copyText(url);
+    btn.textContent = ok ? '⚠ 已複製（後備）' : '⚠ 複製失敗';
+    msg.className = 'msg';
+    msg.textContent = '自動工廠暫時連唔到（' + (e.message || e) + '）— 下面條連結已經選取，長按／點兩下就可以複製，再貼去 Hermes 對話一樣得：';
+    const u = document.createElement('div');
+    u.style.cssText = 'margin-top:6px;padding:6px 10px;background:#241545;border-radius:8px;word-break:break-all;color:#ffd54a;font-size:14px;user-select:all;-webkit-user-select:all;';
+    u.textContent = url;
+    msg.appendChild(u);
+    const c2 = document.createElement('button');
+    c2.style.cssText = 'margin-top:8px;background:#7c5cff;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:14px;cursor:pointer;';
+    c2.textContent = '📋 手動複製';
+    c2.onclick = async () => { c2.textContent = (await copyText(url)) ? '✅ 複製咗！' : '⚠ 再試（長按下面條連結）'; };
+    msg.appendChild(c2);
+  }
+};
+const STAGES = ['等待處理','下載影片','去除背景音樂','轉錄經文','整理拼音解釋','生成跟唸版','上架公開站','完成'];
+let pollTimer = null;
+function showProgress(url) {
+  let panel = document.getElementById('ppanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.className = 'ppanel'; panel.id = 'ppanel';
+    panel.innerHTML =
+      '<div class="phead">⏳ 自動工廠處理中 — 實時進度</div>' +
+      [1,2,3,4,5].map(s => '<div class="prow" data-st="' + s + '"><span>' + s + '. ' + STAGES[s] + '</span><div class="pbar"><i></i></div></div>').join('') +
+      '<div class="pnote" id="pnote">等待開始處理…</div>';
+    document.querySelector('.linkbox').appendChild(panel);
+  }
+  panel.style.display = 'block';
+  clearInterval(pollTimer);
+  pollTimer = setInterval(() => pollStatus(url), 3000);
+  pollStatus(url);
+}
+function renderStages(job) {
+  const rows = document.querySelectorAll('.ppanel .prow');
+  rows.forEach(r => r.classList.remove('done','active'));
+  const st = job.stage || 0;
+  rows.forEach(r => {
+    const n = parseInt(r.dataset.st);
+    if (st > n) r.classList.add('done');
+    else if (st === n && st < 6) r.classList.add('active');
+    else if (st >= 6) r.classList.add('done');
+  });
+  const note = document.getElementById('pnote');
+  if (st >= 6) {
+    const u = job.url || '';
+    if (!u) { note.textContent = '✅ 已上架！'; clearInterval(pollTimer); return; }
+    pollDone(u, note);
+  } else {
+    note.textContent = '⏳ ' + (job.stageName || STAGES[st] || '處理中') + '…（每 3 秒自動更新）';
+  }
+}
+const READY = {};
+const READY_TRIES = {};
+function pollDone(u, note) {
+  READY_TRIES[u] = (READY_TRIES[u] || 0) + 1;
+  if (READY[u] === 1 || READY_TRIES[u] > 40) {
+    note.innerHTML = '✅ <b>已上架！</b> <a href="' + u + '">開啟跟唸版 →</a>';
+    clearInterval(pollTimer);
+    return;
+  }
+  checkReady(u).then(ok => {
+    if (ok) {
+      READY[u] = 1;
+      note.innerHTML = '✅ <b>已上架！</b> <a href="' + u + '">開啟跟唸版 →</a>';
+      clearInterval(pollTimer);
+    } else {
+      note.textContent = '⏳ 已上架 — 公開站發佈中（約 30 秒），自動偵測完成後彈掣…';
+    }
+  });
+}
+function checkReady(u) {
+  return fetch(u + '?t=' + Date.now(), {method:'HEAD', cache:'no-store'}).then(r => r.ok).catch(() => false);
+}
+async function pollStatus(url) {
+  let d = null;
+  try {
+    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/status?url=' + encodeURIComponent(url), {cache:'no-store'});
+    if (r.ok) d = await r.json();
+  } catch(e) {}
+  if (!d || !d.jobs) return;
+  const job = d.jobs[url];
+  renderStages(job ? job : {stage: 0, stageName: '等待開始處理', url: ''});
+}
+</script>
+</body>
+</html>

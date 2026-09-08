@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>🙏 多謝使用 · 讀經 App</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px 20px; text-align:center; }
+  .ver { position:fixed; top:8px; left:10px; font-size:11px; color:#8b7fb0; background:rgba(21,10,40,.75); border:1px solid rgba(107,79,176,.4); padding:2px 9px; border-radius:10px; z-index:99; }
+  .big { font-size:72px; margin-bottom:18px; }
+  h1 { font-size:30px; letter-spacing:4px; color:#ffd54a; margin-bottom:14px; }
+  p { font-size:19px; color:#c9b8f0; line-height:2; margin-bottom:8px; }
+  .small { font-size:15px; color:#7d6ea8; margin-top:16px; line-height:1.8; }
+  .btn { display:inline-block; margin-top:28px; min-height:64px; padding:0 34px; line-height:60px; border-radius:20px; border:2px solid rgba(255,213,74,.5); background:rgba(255,213,74,.1); color:#ffd54a; font-size:22px; font-weight:700; text-decoration:none; }
+  .btn:active { transform:scale(.97); background:rgba(255,213,74,.22); }
+</style>
+</head>
+<body>
+<span class="ver">v4.10.0</span>
+<div class="big">🙏</div>
+<h1>感謝使用</h1>
+<p>讀經圓滿，功德無量</p>
+<p>現在可以關閉此頁面</p>
+<a class="btn" href="home.html">← 返回選經</a>
+<div class="small">願一切眾生離苦得樂 · 同生淨土</div>
+<script>
+// 完全退出音效（靜音模式都畀個回饋）
+try { if (navigator.vibrate) navigator.vibrate([18, 60, 18]); } catch(e) {}
+</script>
+</body>
+</html>
