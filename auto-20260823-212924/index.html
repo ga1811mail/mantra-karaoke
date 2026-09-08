@@ -14,7 +14,7 @@
   /* ── 頂欄（固定頂部，唔隨內容郁）：←返回 / title / 版本 / ✕完全退出 ── */
   .topnav { flex:none; display:flex; align-items:center; gap:8px; margin-bottom:8px; }
   .topnav .t-title { flex:1; min-width:0; text-align:center; font-size:21px; font-weight:700; color:#e8e0f5; letter-spacing:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .navbtn { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:64px; min-width:104px; padding:6px 16px; border-radius:18px; font-size:20px; font-weight:700; text-decoration:none; cursor:pointer; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.12); color:#ffd54a; transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
+  .navbtn { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:64px; min-width:104px; padding:6px 16px; border-radius:18px; font-size:21px; font-weight:700; flex-shrink:0; text-decoration:none; cursor:pointer; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.12); color:#ffd54a; transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
   .navbtn:active { transform:scale(.94); }
   .navbtn.exit { border-color:rgba(220,90,90,.5); background:rgba(220,90,90,.12); color:#ff9d9d; }
   .ver { font-size:11px; color:#8b7fb0; background:rgba(21,10,40,.6); border:1px solid rgba(107,79,176,.35); padding:1px 7px; border-radius:8px; white-space:nowrap; }
@@ -42,8 +42,8 @@
   .bigbtn { display:inline-flex; align-items:center; justify-content:center; min-height:var(--btn-h); padding:8px 22px; border:none; border-radius:18px; font-size:var(--btn-fs); font-weight:800; cursor:pointer; background:linear-gradient(135deg,#ffd54a,#ff9d2e); color:#3a2500; box-shadow:0 4px 14px rgba(255,157,46,.35); transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
   .bigbtn:active { transform:scale(.95); filter:brightness(1.12); }
   .bigbtn.green { background:linear-gradient(135deg,#3ecf6e,#1f9d4f); color:#062b12; box-shadow:0 4px 14px rgba(62,207,110,.3); }
-  :root{ --btn-h:88px; --btn-fs:30px; }
-  .playbig { width:min(250px,82vw); border-radius:26px; }
+  :root{ --btn-h:150px; --btn-fs:52px; }
+  .playbig { width:min(520px,94vw); border-radius:34px; }
   .cntrow { margin:10px auto 0; display:flex; align-items:center; justify-content:center; gap:10px; }
   .cntrow .big { font-size:40px; font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:52px; text-align:center; }
   .cntrow .big.counting { color:#7ee787; }
@@ -70,7 +70,7 @@
     .navbtn { min-width:92px; font-size:19px; padding:4px 10px; }
     .ver { display:none; }
     .stage { padding:14px 10px; border-radius:20px; }
-    .playbig { width:min(230px,80vw); }
+    .playbig { width:min(92vw,520px); }
   }
 </style>
 </head>
@@ -79,7 +79,7 @@
 <div class="topnav">
   <a class="navbtn" id="backBtn" href="../home.html" title="返回設置頁">← 返回</a>
   <div class="t-title">心經梵文 2023.06.25</div>
-  <span class="ver" id="verTag">v4.14.0</span>
+  <span class="ver" id="verTag">v4.15.0</span>
   <a class="navbtn exit" href="../exit.html" title="完全退出">✕ 退出</a>
 </div>
 
