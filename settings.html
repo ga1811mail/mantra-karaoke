@@ -357,6 +357,13 @@ async function loadMgrList() {
         '<button class="delbtn" data-slug="' + s + '">🗑 刪除</button></div>';
     }).join('');
     el.querySelectorAll('.delbtn').forEach(b => b.addEventListener('click', () => delCard(b)));
+    // 有 card 參數 → 用 playlist 短名做經文 title（取代超長 URL 參數）
+    if (cardSlug && pl[cardSlug] && pl[cardSlug].name) {
+      document.querySelector('.t-title').textContent = pl[cardSlug].name;
+      const h1 = document.querySelector('h1');
+      if (h1) h1.textContent = pl[cardSlug].name;
+      document.title = '⚙ ' + pl[cardSlug].name + ' · 讀經設置';
+    }
   } catch(e) { el.innerHTML = '<div class="hint">⚠ 載入失敗（網絡／CDN）</div>'; }
 }
 async function delCard(btn) {
