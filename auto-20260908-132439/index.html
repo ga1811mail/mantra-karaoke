@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <title>持誦往生咒，不僅能在未來得生淨土，還能在現世收穫非常明顯巨大的功德利益。 #南無阿彌陀佛 · 卡拉OK 跟唸</title>
 <style>
-  :root{ --fs:40px; --ui:16px; --pad:16px; }
-  body.f1{ --fs:50px; }
-  body.f2{ --fs:62px; }
+  :root{ --fs:56px; --ui:16px; --pad:16px; }
+  body.f1{ --fs:70px; }
+  body.f2{ --fs:88px; }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
   body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:10px 12px 26px; }
@@ -18,7 +18,7 @@
   .navbtn.exit { border-color:rgba(220,90,90,.5); background:rgba(220,90,90,.12); color:#ff9d9d; }
   .ver { font-size:11px; color:#8b7fb0; background:rgba(21,10,40,.6); border:1px solid rgba(107,79,176,.35); padding:1px 7px; border-radius:8px; white-space:nowrap; }
   /* ── 讀經大字舞台：當前句 ＋ 註解 ＋ 下一句預告（佔最多位） ── */
-  .stage { max-width:880px; margin:6px auto; min-height:52vh; background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.16); border-radius:26px; padding:26px 16px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .stage { max-width:880px; margin:6px auto; min-height:auto; background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.16); border-radius:26px; padding:26px 16px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
   #curLine { width:100%; text-align:center; }
   #curLine .syl { font-size:var(--fs); line-height:1.55; display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-end; gap:6px 14px; }
   #curLine .grp { display:inline-flex; flex-wrap:wrap; justify-content:center; gap:3px; }
@@ -30,10 +30,10 @@
   #curLine .ch.lit b { color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.95); }
   #curLine .ch.lit i { color:#ffd54a; }
   /* 中文註解（細字） */
-  #noteLine { margin-top:16px; font-size:calc(var(--fs) * 0.36); color:#c9b8f0; text-align:center; line-height:1.6; min-height:1.6em; padding:0 6px; }
+  #noteLine { margin-top:16px; font-size:calc(var(--fs) * 0.4); color:#c9b8f0; text-align:center; line-height:1.6; min-height:1.6em; padding:0 6px; }
   body.nonote #noteLine { display:none; }
   /* 下一句預告（暗色，唔 highlight） */
-  #nextLine { margin-top:18px; font-size:calc(var(--fs) * 0.42); color:#b9a8e8; opacity:.92; text-align:center; line-height:1.65; letter-spacing:1px; min-height:1.65em; padding:0 8px; }
+  #nextLine { margin-top:20px; font-size:calc(var(--fs) * 0.5); color:#b9a8e8; opacity:.92; text-align:center; line-height:1.65; letter-spacing:1px; min-height:1.65em; padding:0 8px; }
   #nextLine .nxlabel { color:#8b7fb0; margin-right:10px; letter-spacing:1px; }
   /* ── 控制：淨播放/暫停大掣 ＋ 計次 ── */
   .ctl { max-width:880px; margin:12px auto 2px; text-align:center; }
@@ -63,7 +63,7 @@
   .minibtn:active { transform:scale(.94); }
   .minibtn.loopon { box-shadow:0 0 0 2px #fff inset, 0 0 10px rgba(255,213,74,.5); }
   #abShow { font-size:15px; color:#9b8cc0; }
-  @media (max-width:640px) { .topnav .t-title { font-size:17px; } .navbtn { min-width:62px; } .stage { min-height:48vh; } }
+  @media (max-width:640px) { .topnav .t-title { font-size:17px; } .navbtn { min-width:62px; } }
 </style>
 </head>
 <body>
@@ -71,7 +71,7 @@
 <div class="topnav">
   <a class="navbtn" id="backBtn" href="../home.html" title="返回設置頁">← 返回</a>
   <div class="t-title">持誦往生咒，不僅能在未來得生淨土，還能在現世收穫非常明顯巨大的功德利益。 #南無阿彌陀佛</div>
-  <span class="ver" id="verTag">v4.11.0</span>
+  <span class="ver" id="verTag">v4.12.0</span>
   <a class="navbtn exit" href="../exit.html" title="完全退出">✕ 退出</a>
 </div>
 
@@ -248,6 +248,7 @@ function renderCur(i) {
   }
   chars = [];
   cur.querySelectorAll('.ch').forEach(el => chars.push({el, s:parseFloat(el.dataset.s), e:parseFloat(el.dataset.e)}));
+  fitFont();
 }
 let curIdx = -1;
 let abA = -1, abB = -1;   // 原時間軸
@@ -257,6 +258,27 @@ let goal = parseInt(MK.get('goal', '0')) || 0, remain = goal, counting = false, 
 let goalTag = document.getElementById('goalTag');
 function updGoalTag() { if (goalTag) goalTag.textContent = '目標 ' + (goal === 0 ? '∞' : goal); }
 
+// 字體自動 fit：長句縮細至一行顯示（下限 55%），短句用盡大細；唔靠手動縮放
+const FONT_BASE = {'0': 56, '1': 70, '2': 88};
+function fitFont() {
+  const syl = document.querySelector('#curLine .syl');
+  const box = document.getElementById('curLine');
+  if (!syl || !box) return;
+  const m = document.body.className.match(/f(\d)/);
+  const base = FONT_BASE[m ? m[1] : '0'] || 56;
+  const avail = box.clientWidth - 4;
+  // wrap 後度最闊嗰行：正常長句換行顯示（保持大字），真正溢出（單行超闊）先縮細
+  const need = syl.scrollWidth;
+  if (need > avail) {
+    const r = avail / need;
+    const fs = Math.max(Math.round(base * Math.min(r, 1)), Math.round(base * 0.72));
+    if (fs !== base) document.body.style.setProperty('--fs', fs + 'px');
+    else document.body.style.removeProperty('--fs');
+  } else {
+    document.body.style.removeProperty('--fs');
+  }
+}
+window.addEventListener('resize', () => { if (typeof curIdx === 'number' && curIdx >= 0) fitFont(); });
 function applyLit(t) {
   let lit = -1;
   for (let i=0;i<chars.length;i++) { if (t >= chars[i].s && t < chars[i].e) { lit = i; break; } }

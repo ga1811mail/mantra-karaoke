@@ -9,25 +9,25 @@
   body { background:linear-gradient(160deg,#150a28 0%,#2a1450 60%,#1a0f33 100%); color:#e8e0f5; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; min-height:100vh; padding:0 16px 40px; }
   /* 頂欄：返回 / title / 版本 / 完全退出 */
   .topnav { position:sticky; top:0; z-index:50; display:flex; align-items:center; gap:10px; background:rgba(21,10,40,.92); backdrop-filter:blur(6px); padding:12px 4px; border-bottom:1px solid rgba(255,213,74,.18); }
-  .navbtn { display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 20px; border-radius:16px; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.08); color:#ffd54a; font-size:20px; font-weight:700; text-decoration:none; cursor:pointer; flex-shrink:0; }
+  .navbtn { display:inline-flex; align-items:center; justify-content:center; min-height:60px; padding:0 20px; border-radius:16px; border:2px solid rgba(255,213,74,.45); background:rgba(255,213,74,.08); color:#ffd54a; font-size:21px; font-weight:700; text-decoration:none; cursor:pointer; flex-shrink:0; }
   .navbtn:active { transform:scale(.96); background:rgba(255,213,74,.2); }
   .navbtn.exit { border-color:rgba(255,120,120,.5); background:rgba(255,80,80,.12); color:#ffb0b0; }
-  .t-title { flex:1; text-align:center; font-size:22px; font-weight:700; color:#ffd54a; letter-spacing:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .t-title { flex:1; text-align:center; font-size:26px; font-weight:700; color:#ffd54a; letter-spacing:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .ver { font-size:13px; color:#9b8cc0; background:rgba(21,10,40,.8); border:1px solid rgba(107,79,176,.45); padding:3px 10px; border-radius:12px; flex-shrink:0; }
-  h1 { text-align:center; font-size:30px; letter-spacing:4px; color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.35); margin:26px 0 4px; }
-  .sub { text-align:center; font-size:16px; color:#b9a8e8; letter-spacing:1px; margin-bottom:26px; }
+  h1 { text-align:center; font-size:36px; letter-spacing:4px; color:#ffd54a; text-shadow:0 0 18px rgba(255,213,74,.35); margin:26px 0 4px; }
+  .sub { text-align:center; font-size:20px; color:#b9a8e8; letter-spacing:1px; margin-bottom:26px; }
   .wrap { max-width:640px; margin:0 auto; }
   /* 選項組 */
   .group { background:rgba(255,255,255,.04); border:1px solid rgba(255,213,74,.22); border-radius:20px; padding:18px 16px; margin-bottom:18px; }
-  .glabel { font-size:19px; font-weight:700; color:#ffd54a; margin-bottom:14px; letter-spacing:1px; }
+  .glabel { font-size:24px; font-weight:700; color:#ffd54a; margin-bottom:14px; letter-spacing:1px; }
   .opts { display:flex; flex-wrap:wrap; gap:12px; }
-  .opt { flex:1 1 90px; min-height:64px; display:inline-flex; align-items:center; justify-content:center; border-radius:18px; border:2px solid rgba(155,140,192,.35); background:rgba(155,140,192,.08); color:#e8e0f5; font-size:21px; font-weight:700; cursor:pointer; user-select:none; padding:8px 12px; }
+  .opt { flex:1 1 100px; min-height:70px; display:inline-flex; align-items:center; justify-content:center; border-radius:18px; border:2px solid rgba(155,140,192,.35); background:rgba(155,140,192,.08); color:#e8e0f5; font-size:25px; font-weight:700; cursor:pointer; user-select:none; padding:10px 14px; }
   .opt:active { transform:scale(.95); }
   .opt.sel { border-color:#ffd54a; background:rgba(255,213,74,.2); color:#ffd54a; box-shadow:0 0 14px rgba(255,213,74,.3); }
-  .opt .sm { display:block; font-size:13px; font-weight:400; color:#b9a8e8; text-align:center; }
+  .opt .sm { display:block; font-size:15px; font-weight:400; color:#b9a8e8; text-align:center; }
   .opt.sel .sm { color:#ffe9a0; }
   /* 開始讀經大掣 */
-  .go { display:block; width:100%; min-height:84px; margin-top:10px; border:none; border-radius:24px; background:linear-gradient(135deg,#2ea043,#7ee787); color:#05330f; font-size:30px; font-weight:800; letter-spacing:2px; cursor:pointer; box-shadow:0 6px 24px rgba(46,160,67,.4); }
+  .go { display:block; width:100%; min-height:96px; margin-top:10px; border:none; border-radius:26px; background:linear-gradient(135deg,#2ea043,#7ee787); color:#05330f; font-size:36px; font-weight:800; letter-spacing:2px; cursor:pointer; box-shadow:0 6px 24px rgba(46,160,67,.4); }
   .go:active { transform:scale(.98); }
   .gowrap { position:sticky; bottom:0; padding:14px 0 18px; background:linear-gradient(180deg,transparent,rgba(21,10,40,.95) 30%); }
   /* 管理區（加經） */
@@ -52,7 +52,7 @@
   @keyframes pulse { 0%,100%{opacity:.5;} 50%{opacity:1;} }
   .ppanel .pnote { font-size:13px; color:#9b8cc0; margin-top:6px; }
   .ppanel .pnote a { color:#7ee787; font-size:15px; }
-  .hint { text-align:center; font-size:14px; color:#7d6ea8; margin-top:14px; line-height:1.7; }
+  .hint { text-align:center; font-size:17px; color:#7d6ea8; margin-top:14px; line-height:1.7; }
   /* 管理經文列表 */
   .mgrlist { display:flex; flex-direction:column; gap:8px; font-size:14px; color:#9b8cc0; }
   .mgrrow { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.03); border:1px solid rgba(155,140,192,.2); border-radius:12px; padding:8px 12px; }
@@ -68,10 +68,10 @@
   <a class="navbtn" href="home.html" title="返回上一頁">← 返回</a>
   <div class="t-title" id="pageTitle">讀經設置</div>
   <a class="navbtn exit" href="exit.html" title="完全退出">✕ 退出</a>
-  <span class="ver">v4.10.0</span>
+  <span class="ver">v4.12.0</span>
 </div>
-<h1>⚙ 讀經設置</h1>
-<div class="sub" id="cardSub">揀好之後㩒下面綠色大掣開始讀經</div>
+<h1>📖 讀呢段經嘅設置</h1>
+<div class="sub" id="cardSub">揀好之後㩒「開始讀經」；唔啱就 ← 退出或 ✕ 退出再選過經</div>
 
 <div class="wrap">
   <!-- 音速 -->
@@ -108,7 +108,7 @@
 
   <div class="gowrap">
     <button class="go" id="goBtn">▶ 開始讀經</button>
-    <div class="hint">設置會自動記低，下次唔使再揀。</div>
+    <div class="hint">設置自動記低做 default，下次揀經照跟；想改隨時再揀。</div>
   </div>
 
   <!-- 管理區：加經（自動入播放清單＋齊 metadata） -->
@@ -161,7 +161,7 @@ const cardTitle = q.get('t') || '';
 if (cardTitle) {
   document.title = '⚙ ' + cardTitle;
   document.getElementById('pageTitle').textContent = cardTitle;
-  document.getElementById('cardSub').textContent = '揀好速度同顯示，㩒綠色大掣開始讀經';
+  document.getElementById('cardSub').textContent = '揀好速度同顯示，㩒「開始讀經」；唔啱 ← 退出再選過經';
 }
 
 // ── 選項組通用 ──
