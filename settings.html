@@ -53,6 +53,13 @@
   .ppanel .pnote { font-size:13px; color:#9b8cc0; margin-top:6px; }
   .ppanel .pnote a { color:#7ee787; font-size:15px; }
   .hint { text-align:center; font-size:14px; color:#7d6ea8; margin-top:14px; line-height:1.7; }
+  /* 管理經文列表 */
+  .mgrlist { display:flex; flex-direction:column; gap:8px; font-size:14px; color:#9b8cc0; }
+  .mgrrow { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.03); border:1px solid rgba(155,140,192,.2); border-radius:12px; padding:8px 12px; }
+  .mgrname { flex:1; color:#e8e0f5; text-decoration:none; font-size:15px; word-break:break-all; }
+  .mgrdate { font-size:12px; color:#7d6ea8; flex-shrink:0; }
+  .delbtn { flex-shrink:0; background:rgba(255,80,80,.15); color:#ffb0b0; border:1.5px solid rgba(255,120,120,.4); border-radius:10px; padding:6px 12px; font-size:13px; cursor:pointer; }
+  .delbtn:disabled { opacity:.5; }
   @media (max-width:480px) { .t-title { font-size:18px; } h1 { font-size:25px; } }
 </style>
 </head>
@@ -116,6 +123,10 @@
         </div>
         <div class="msg" id="linkMsg">自動工廠處理（下載→除背景音樂→轉錄→註解→上架→入播放清單），約 2–5 分鐘。</div>
       </div>
+    </div>
+    <div class="group">
+      <div class="glabel">🗂 管理經文</div>
+      <div class="mgrlist" id="mgrList">載入中…</div>
     </div>
   </div>
 </div>
@@ -328,6 +339,39 @@ async function pollStatus(url) {
   const job = d.jobs[url];
   renderStages(job ? job : {stage: 0, stageName: '等待開始處理', url: ''});
 }
+// ── 管理經文：列出 live 卡（playlist.json）＋🗑 刪除（同步清） ──
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+async function loadMgrList() {
+  const el = document.getElementById('mgrList');
+  if (!el) return;
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/ga1811mail/mantra-karaoke/main/playlist.json?t=' + Date.now(), {cache: 'no-store'});
+    const pl = await r.json();
+    const slugs = Object.keys(pl || {}).sort();
+    if (!slugs.length) { el.innerHTML = '<div class="hint">未有上架卡</div>'; return; }
+    el.innerHTML = slugs.map(s => {
+      const c = pl[s] || {};
+      return '<div class="mgrrow"><a class="mgrname" href="https://ga1811mail.github.io/mantra-karaoke/' + s + '/" target="_blank">' +
+        escHtml(c.name || s) + '</a>' +
+        (c.date ? '<span class="mgrdate">' + escHtml(c.date) + '</span>' : '') +
+        '<button class="delbtn" data-slug="' + s + '">🗑 刪除</button></div>';
+    }).join('');
+    el.querySelectorAll('.delbtn').forEach(b => b.addEventListener('click', () => delCard(b)));
+  } catch(e) { el.innerHTML = '<div class="hint">⚠ 載入失敗（網絡／CDN）</div>'; }
+}
+async function delCard(btn) {
+  const slug = btn.dataset.slug;
+  const name = btn.closest('.mgrrow')?.querySelector('.mgrname')?.textContent || slug;
+  if (!confirm('確定刪除「' + name + '」？\n播放清單、解釋、狀態會一齊清。')) return;
+  btn.disabled = true; btn.textContent = '刪除中…';
+  try {
+    const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/delete?slug=' + encodeURIComponent(slug), {method: 'DELETE'});
+    const d = await r.json().catch(() => ({}));
+    if (r.ok && d.ok) { btn.textContent = '✅ 已刪'; setTimeout(loadMgrList, 1200); }
+    else { btn.textContent = '⚠ ' + (d.error || r.status); btn.disabled = false; }
+  } catch(e) { btn.textContent = '⚠ 工廠離線'; btn.disabled = false; }
+}
+loadMgrList();
 </script>
 </body>
 </html>
