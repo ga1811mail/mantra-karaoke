@@ -44,16 +44,16 @@
   .bigbtn.green { background:linear-gradient(135deg,#3ecf6e,#1f9d4f); color:#062b12; box-shadow:0 4px 14px rgba(62,207,110,.3); }
   :root{ --btn-h:150px; --btn-fs:52px; }
   .playbig { width:min(520px,94vw); border-radius:34px; }
-  .reptog { display:inline-flex; align-items:center; justify-content:center; gap:7px; margin:0 0 0 14px; min-height:56px; min-width:118px; padding:6px 14px; border-radius:16px; font-size:26px; font-weight:800; cursor:pointer; border:2.5px solid rgba(155,140,192,.5); background:rgba(155,140,192,.10); color:#9b8cc0; flex-shrink:0; transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
+  .reptog { display:inline-flex; align-items:center; justify-content:center; gap:10px; margin:0 0 0 14px; min-height:115px; min-width:210px; padding:8px 26px; border-radius:26px; font-size:43px; font-weight:800; cursor:pointer; border:2.5px solid rgba(155,140,192,.5); background:rgba(155,140,192,.10); color:#9b8cc0; flex-shrink:0; transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
   .reptog.on { border-color:rgba(255,213,74,.75); background:rgba(255,213,74,.16); color:#ffd54a; box-shadow:0 0 14px rgba(255,213,74,.25); }
   .reptog:active { transform:scale(.94); }
-  .reptog .rpn { font-size:22px; font-weight:700; opacity:.85; }
-    .cntrow { margin:10px auto 0; display:flex; align-items:center; justify-content:center; gap:10px; }
-  .cntrow .big { font-size:40px; font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:52px; text-align:center; }
+  .reptog .rpn { font-size:34px; font-weight:700; opacity:.85; }
+    .cntrow { margin:10px auto 0; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
+  .cntrow .big { font-size:52px; font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:64px; text-align:center; }
   .cntrow .big.counting { color:#7ee787; }
   .cntrow .big.flash { animation:flash .5s; }
   @keyframes flash { 0%{transform:scale(1.6); color:#fff;} 100%{transform:scale(1);} }
-  .cgoal { font-size:calc(var(--ui) * 1.1); color:#c9b8f0; }
+  .cgoal { font-size:43px; color:#c9b8f0; font-weight:700; letter-spacing:1px; }
   /* 完成訊息 */
   .done { flex:none; text-align:center; font-size:24px; color:#ffd54a; display:none; letter-spacing:2px; line-height:1.6; padding:4px 8px 6px; }
   /* 經文目錄（資料源，唔顯示） */
@@ -75,6 +75,10 @@
     .ver { display:none; }
     .stage { padding:14px 10px; border-radius:20px; }
     .playbig { width:min(92vw,520px); }
+    .reptog { font-size:38px; min-height:96px; min-width:170px; padding:6px 18px; border-radius:22px; gap:8px; }
+    .reptog .rpn { font-size:30px; }
+    .cntrow .big { font-size:44px; min-width:52px; }
+    .cgoal { font-size:38px; }
   }
 </style>
 </head>
