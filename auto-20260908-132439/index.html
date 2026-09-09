@@ -44,7 +44,11 @@
   .bigbtn.green { background:linear-gradient(135deg,#3ecf6e,#1f9d4f); color:#062b12; box-shadow:0 4px 14px rgba(62,207,110,.3); }
   :root{ --btn-h:150px; --btn-fs:52px; }
   .playbig { width:min(520px,94vw); border-radius:34px; }
-  .cntrow { margin:10px auto 0; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .reptog { display:inline-flex; align-items:center; justify-content:center; gap:7px; margin:0 0 0 14px; min-height:56px; min-width:118px; padding:6px 14px; border-radius:16px; font-size:26px; font-weight:800; cursor:pointer; border:2.5px solid rgba(155,140,192,.5); background:rgba(155,140,192,.10); color:#9b8cc0; flex-shrink:0; transition:transform .08s, filter .15s; -webkit-tap-highlight-color:transparent; }
+  .reptog.on { border-color:rgba(255,213,74,.75); background:rgba(255,213,74,.16); color:#ffd54a; box-shadow:0 0 14px rgba(255,213,74,.25); }
+  .reptog:active { transform:scale(.94); }
+  .reptog .rpn { font-size:22px; font-weight:700; opacity:.85; }
+    .cntrow { margin:10px auto 0; display:flex; align-items:center; justify-content:center; gap:10px; }
   .cntrow .big { font-size:40px; font-weight:800; color:#ffd54a; font-variant-numeric:tabular-nums; min-width:52px; text-align:center; }
   .cntrow .big.counting { color:#7ee787; }
   .cntrow .big.flash { animation:flash .5s; }
@@ -95,7 +99,8 @@
   <button class="bigbtn green playbig" id="playBtn">▶ 播放</button>
   <div class="cntrow">
     <span class="big" id="remain">∞</span>
-    <span class="cgoal" id="goalTag">目標 ∞</span>
+    <span class="cgoal" id="goalTag">次數 ∞</span>
+    <button class="reptog" id="repBtn">🔁 <span class="rpn" id="repNum">—</span></button>
   </div>
 </div>
 <div class="done" id="done">🎉 完成！功德迴向一切眾生 🙏</div>
@@ -237,11 +242,23 @@ function renderCur(i) {
 }
 let curIdx = -1;
 let abA = -1, abB = -1;   // 原時間軸
-let singleLine = -1;      // 🔂 單句重複：-1 = 關
+let repOn = false, repCnt = 0, repPassed = false;  // 🔁 每句重複：on = 每句自動讀 N 次先過（N = 唸誦次數，∞→3）
+const repBtn = document.getElementById('repBtn'), repNum = document.getElementById('repNum');
+function repN() { return goal > 0 ? goal : 3; }
+function updRepUI() {
+  if (!repBtn) return;
+  repBtn.classList.toggle('on', repOn);
+  repBtn.textContent = '';
+  const s1 = document.createElement('span'); s1.textContent = repOn ? '🔁' : '🔂';
+  const s2 = document.createElement('span'); s2.className = 'rpn'; s2.textContent = repOn ? String(repN()) : '關';
+  repBtn.append(s1, s2);
+}
+if (repBtn) repBtn.addEventListener('click', () => { repOn = !repOn; repCnt = 0; updRepUI(); });
+updRepUI();
 let seeking = false;      // seek 進行中，防重入
 let goal = parseInt(MK.get('goal', '0')) || 0, remain = goal, counting = false, passCounted = false;
 let goalTag = document.getElementById('goalTag');
-function updGoalTag() { if (goalTag) goalTag.textContent = '目標 ' + (goal === 0 ? '∞' : goal); }
+function updGoalTag() { if (goalTag) goalTag.textContent = '次數 ' + (goal === 0 ? '∞' : goal); }
 
 function applyLit(t) {
   let lit = -1;
@@ -269,6 +286,17 @@ function tick() {
   const _tm = document.getElementById('timer'); if (_tm) _tm.textContent = t.toFixed(1) + ' / ' + DUR.toFixed(1) + ' s';
   let li = lines.findIndex(L => tDisp >= L.s && tDisp < L.e);
   if (li === -1 && tDisp >= lines[lines.length-1].e && tDisp < LAST_END + 0.2) li = lines.length - 1;
+  // 🔁 每句重複：句播完但未讀夠 N 次 → 跳返句頭重讀（唔進下一句）；尾句窗口延伸到 audio 尾
+  if (repOn && curIdx >= 0 && !AUDIO.paused) {
+    const curS = lines[curIdx].s, curE = lines[curIdx].e;
+    const isLast = curIdx === lines.length - 1;
+    const gone = (li > curIdx) || (li === -1 && tDisp >= curE && (!isLast || tDisp < LAST_END - 0.05)) || (isLast && tDisp >= LAST_END && tDisp < LAST_END + 0.3);
+    if (gone && !repPassed) {
+      if (repCnt < repN() - 1) { repCnt++; seekTo(curS / RATES[curRate].s); return; }
+      repPassed = true;
+    }
+  }
+  if (li !== curIdx && li >= 0) { repCnt = 0; repPassed = false; }
   if (li !== curIdx) {
     lines.forEach((L,i) => L.sec.classList.toggle('playing', i===li));
     if (li !== -1) { renderCur(li); curIdx = li; }
@@ -350,7 +378,7 @@ document.getElementById('playBtn').onclick = () => {
 })();
 window.__EX = window.__EX || null;
 renderCur(0);
-updAB(); updCounter();
+if (typeof updAB === 'function') updAB(); updCounter();
 </script>
 </body>
 </html>
