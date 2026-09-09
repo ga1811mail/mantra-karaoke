@@ -349,7 +349,7 @@ async function loadMgrList() {
     el.innerHTML = slugs.map(s => {
       const c = pl[s] || {};
       return '<div class="mgrrow"><a class="mgrname" href="https://ga1811mail.github.io/mantra-karaoke/' + s + '/" target="_blank">' +
-        escHtml(c.name || c.title || s) + '</a>' +
+        escHtml(c.name || c.title || '未命名經文') + '</a>' +
         (c.date ? '<span class="mgrdate">' + escHtml(c.date) + '</span>' : '') +
         '<button class="delbtn" data-slug="' + s + '">🗑 刪除</button></div>';
     }).join('');
@@ -371,6 +371,7 @@ async function delCard(btn) {
     const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/delete?slug=' + encodeURIComponent(slug), {method: 'DELETE'});
     const d = await r.json().catch(() => ({}));
     if (r.ok && d.ok) { btn.textContent = '✅ 已刪'; setTimeout(loadMgrList, 1200); }
+    else if (d.error === '搵唔到呢個經文') { btn.textContent = '✅ 已刪'; setTimeout(loadMgrList, 800); }
     else { btn.textContent = '⚠ ' + (d.error || r.status); btn.disabled = false; }
   } catch(e) { btn.textContent = '⚠ 工廠離線'; btn.disabled = false; }
 }

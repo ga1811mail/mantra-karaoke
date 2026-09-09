@@ -84,7 +84,7 @@ async function delCard(a, name, slug) {
   try {
     const r = await fetch('https://lees-mac-mini-1.tail2f12fa.ts.net/mantra/delete?slug=' + encodeURIComponent(slug), {method: 'DELETE'});
     const j = await r.json().catch(() => ({}));
-    if (r.ok && j.ok) { d.textContent = '✅'; setTimeout(() => location.reload(), 1500); }
+    if (r.ok && j.ok || j.error === '搵唔到呢個經文') { d.textContent = '✅'; setTimeout(() => location.reload(), 1200); }
     else { d.textContent = '⚠'; d.disabled = false; alert('刪除失敗：' + (j.error || r.status)); }
   } catch(e) { d.textContent = '⚠'; d.disabled = false; alert('工廠離線，刪唔到（Mac mini 未開？）'); }
 }
