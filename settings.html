@@ -349,7 +349,7 @@ async function loadMgrList() {
     el.innerHTML = slugs.map(s => {
       const c = pl[s] || {};
       return '<div class="mgrrow"><a class="mgrname" href="https://ga1811mail.github.io/mantra-karaoke/' + s + '/" target="_blank">' +
-        escHtml(c.name || s) + '</a>' +
+        escHtml(c.name || c.title || s) + '</a>' +
         (c.date ? '<span class="mgrdate">' + escHtml(c.date) + '</span>' : '') +
         '<button class="delbtn" data-slug="' + s + '">🗑 刪除</button></div>';
     }).join('');
